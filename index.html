@@ -31,7 +31,7 @@
             margin: 40px auto;
             padding: 0 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 25px;
         }
 
@@ -40,49 +40,67 @@
             border-radius: 15px;
             padding: 25px;
             border: 1px solid #ddd;
-            display: flex;
-            flex-direction: column;
         }
 
         .icon-title {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             border-bottom: 2px solid #f0f2f5;
             padding-bottom: 10px;
         }
 
         .icon { font-size: 30px; }
         h2 { margin: 0; color: #1c1e21; font-size: 20px; }
-        
-        .file-list {
+
+        /* Style cho nút Khối lớp */
+        .grade-item {
+            margin-bottom: 10px;
+        }
+
+        .grade-header {
+            width: 100%;
+            background-color: #f8f9fa;
+            border: 1px solid #e4e6eb;
+            padding: 12px 15px;
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .grade-header:hover {
+            background-color: #e4e6eb;
+        }
+
+        /* Danh sách bài giảng bên trong (ẩn mặc định) */
+        .file-list {
+            display: none;
+            padding: 10px 5px 10px 20px;
             flex-direction: column;
             gap: 8px;
-            max-height: 400px;
-            overflow-y: auto;
         }
 
         .btn-file {
             display: block;
-            background-color: #f8f9fa;
             color: #007bff;
             padding: 8px 12px;
             text-decoration: none;
             border-radius: 6px;
-            border: 1px solid #e4e6eb;
+            background: #ffffff;
+            border: 1px solid #eee;
             font-size: 14px;
             transition: all 0.2s;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .btn-file:hover {
             background-color: #007bff;
             color: white;
-            border-color: #007bff;
         }
 
         .loading { color: #8a8d91; font-style: italic; font-size: 13px; }
@@ -94,18 +112,6 @@
             color: #8a8d91;
             border-top: 1px solid #ddd;
             background: white;
-        }
-
-        /* Chia nhỏ các khối trong mục Bài giảng */
-        .grade-group {
-            margin-bottom: 20px;
-        }
-        .grade-title {
-            font-weight: bold;
-            font-size: 14px;
-            color: #4b4d4f;
-            margin-bottom: 8px;
-            display: block;
         }
     </style>
 </head>
@@ -123,24 +129,36 @@
             <h2>Kho Bài Giảng</h2>
         </div>
         
-        <div class="grade-group">
-            <span class="grade-title">📍 Khối 8</span>
-            <div id="list-khoi8" class="file-list"><span class="loading">Đang tải...</span></div>
+        <div class="grade-item">
+            <div class="grade-header" onclick="toggleFolder('baigiang/khoi6', 'list-6')">
+                <span>📍 Khối 6</span>
+                <small>▼</small>
+            </div>
+            <div id="list-6" class="file-list"><span class="loading">Đang tải...</span></div>
         </div>
 
-        <div class="grade-group">
-            <span class="grade-title">📍 Khối 6</span>
-            <div id="list-khoi6" class="file-list"><span class="loading">Đang tải...</span></div>
+        <div class="grade-item">
+            <div class="grade-header" onclick="toggleFolder('baigiang/khoi7', 'list-7')">
+                <span>📍 Khối 7</span>
+                <small>▼</small>
+            </div>
+            <div id="list-7" class="file-list"><span class="loading">Đang tải...</span></div>
         </div>
 
-        <div class="grade-group">
-            <span class="grade-title">📍 Khối 7</span>
-            <div id="list-khoi7" class="file-list"><span class="loading">Đang tải...</span></div>
+        <div class="grade-item">
+            <div class="grade-header" onclick="toggleFolder('baigiang/khoi8', 'list-8')">
+                <span>📍 Khối 8</span>
+                <small>▼</small>
+            </div>
+            <div id="list-8" class="file-list"><span class="loading">Đang tải...</span></div>
         </div>
 
-        <div class="grade-group">
-            <span class="grade-title">📍 Khối 9</span>
-            <div id="list-khoi9" class="file-list"><span class="loading">Đang tải...</span></div>
+        <div class="grade-item">
+            <div class="grade-header" onclick="toggleFolder('baigiang/khoi9', 'list-9')">
+                <span>📍 Khối 9</span>
+                <small>▼</small>
+            </div>
+            <div id="list-9" class="file-list"><span class="loading">Đang tải...</span></div>
         </div>
     </div>
 
@@ -149,60 +167,64 @@
             <span class="icon">🎮</span>
             <h2>Trò Chơi Trí Tuệ</h2>
         </div>
-        <div id="list-game" class="file-list">
-            <span class="loading">Đang quét trò chơi...</span>
+        <div class="grade-item">
+            <div class="grade-header" onclick="toggleFolder('game', 'list-game')">
+                <span>🕹️ Danh sách trò chơi</span>
+                <small>▼</small>
+            </div>
+            <div id="list-game" class="file-list"><span class="loading">Đang tải...</span></div>
         </div>
     </div>
 </div>
 
 <footer>
-    © 2026 Hyminhlu. Trang web tự động hóa danh mục tài liệu.
+    © 2026 Hyminhlu. Thiết kế tối ưu cho trải nghiệm học sinh.
 </footer>
 
 <script>
     const username = 'hyminhlu';
     const repo = 'hyminhlu.github.io';
 
-    // Hàm quét file tổng quát
-    async function loadFiles(folderPath, elementId, icon) {
+    async function toggleFolder(path, elementId) {
         const container = document.getElementById(elementId);
-        try {
-            const response = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${folderPath}`);
-            const files = await response.json();
+        
+        // Nếu đang hiện thì ẩn đi
+        if (container.style.display === 'flex') {
+            container.style.display = 'none';
+            return;
+        }
 
-            if (response.ok && Array.isArray(files)) {
-                container.innerHTML = '';
-                const validFiles = files.filter(f => f.type === 'file' && f.name.toLowerCase() !== 'readme.md');
+        // Hiện ra và bắt đầu tải dữ liệu
+        container.style.display = 'flex';
+        
+        // Chỉ tải dữ liệu nếu chưa có nội dung (tránh tải lại nhiều lần)
+        if (container.innerHTML.includes('Đang tải')) {
+            try {
+                const response = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${path}`);
+                const files = await response.json();
 
-                if (validFiles.length === 0) {
-                    container.innerHTML = '<span class="loading">Chưa có dữ liệu.</span>';
-                } else {
-                    validFiles.forEach(file => {
-                        const link = document.createElement('a');
-                        link.href = file.path;
-                        link.className = 'btn-file';
-                        // Xóa đuôi file để hiển thị tên bài giảng cho đẹp
-                        const displayName = file.name.split('.').slice(0, -1).join('.');
-                        link.innerText = icon + " " + displayName;
-                        container.appendChild(link);
-                    });
+                if (response.ok && Array.isArray(files)) {
+                    container.innerHTML = '';
+                    const validFiles = files.filter(f => f.type === 'file' && f.name.toLowerCase() !== 'readme.md');
+
+                    if (validFiles.length === 0) {
+                        container.innerHTML = '<span class="loading">Thư mục hiện đang trống.</span>';
+                    } else {
+                        validFiles.forEach(file => {
+                            const link = document.createElement('a');
+                            link.href = file.path;
+                            link.className = 'btn-file';
+                            const displayName = file.name.split('.').slice(0, -1).join('.');
+                            link.innerText = "📄 " + displayName;
+                            container.appendChild(link);
+                        });
+                    }
                 }
-            } else {
-                container.innerHTML = '<span class="loading">Thư mục trống.</span>';
+            } catch (e) {
+                container.innerHTML = '<span class="loading">Lỗi kết nối GitHub.</span>';
             }
-        } catch (e) {
-            container.innerHTML = '<span class="loading">Lỗi tải dữ liệu.</span>';
         }
     }
-
-    // Chạy quét tất cả các thư mục khi vào trang
-    window.onload = () => {
-        loadFiles('baigiang/khoi6', 'list-khoi6', '📄');
-        loadFiles('baigiang/khoi7', 'list-khoi7', '📄');
-        loadFiles('baigiang/khoi8', 'list-khoi8', '📄');
-        loadFiles('baigiang/khoi9', 'list-khoi9', '📄');
-        loadFiles('game', 'list-game', '🕹️');
-    };
 </script>
 
 </body>
