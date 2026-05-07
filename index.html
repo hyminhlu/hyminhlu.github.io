@@ -2,32 +2,109 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Thư Viện Bài Giảng của Tôi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyminhlu | Bài giảng & Trò chơi</title>
     <style>
-        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f4f4; }
-        .card { background: white; padding: 20px; border-radius: 8px; shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h1 { color: #2c3e50; }
-        .btn { display: inline-block; background: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+        /* Thiết lập chung */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 { margin: 0; color: #007bff; font-size: 28px; }
+        p.subtitle { margin: 10px 0 0; color: #65676b; }
+
+        /* Bố cục 2 mục chính */
+        .container {
+            flex: 1;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .section-card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .section-card:hover {
+            border-color: #007bff;
+            box-shadow: 0 5px 15px rgba(0,123,255,0.1);
+            transform: translateY(-5px);
+        }
+
+        .icon { font-size: 50px; margin-bottom: 15px; display: block; }
+        h2 { margin: 0 0 15px; color: #1c1e21; }
+        p { color: #606770; font-size: 16px; margin-bottom: 25px; }
+
+        /* Nút bấm to rõ */
+        .btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .btn:hover { background-color: #0056b3; }
+        .btn.secondary { background-color: #6c757d; }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #8a8d91;
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>Chào mừng bạn đến với Không gian Học tập!</h1>
-        <p>Đây là nơi lưu trữ các bài giảng điện tử và các trò chơi trí tuệ do tôi phát triển.</p>
+
+<header>
+    <h1>Hyminhlu - Không gian học tập</h1>
+    <p class="subtitle">Nơi lưu trữ tài liệu và các dự án sáng tạo</p>
+</header>
+
+<div class="container">
+    <div class="section-card">
+        <span class="icon">📚</span>
+        <h2>Kho Bài Giảng</h2>
+        <p>Tổng hợp các bài giảng điện tử, tài liệu học tập và hướng dẫn chi tiết dành cho học sinh.</p>
+        <a href="#" class="btn secondary">Đang cập nhật nội dung...</a>
     </div>
 
-    <div class="card">
-        <h2>🎮 Trò chơi: Cờ Tướng (Xiangqi)</h2>
-        <p>Phiên bản thử nghiệm chạy trên nền tảng Web.</p>
-        <a href="#" class="btn">Chơi ngay (Coming soon)</a>
+    <div class="section-card">
+        <span class="icon">🎮</span>
+        <h2>Trò Chơi Trí Tuệ</h2>
+        <p>Các dự án game được lập trình để rèn luyện tư duy, bao gồm phiên bản Cờ Tướng (Xiangqi).</p>
+        <a href="#" class="btn">Vào kho trò chơi</a>
     </div>
+</div>
 
-    <div class="card">
-        <h2>📚 Danh sách bài giảng</h2>
-        <ul>
-            <li>Bài giảng 1: Nhập môn lập trình game</li>
-            <li>Bài giảng 2: Chiến thuật cờ tướng cơ bản</li>
-        </ul>
-    </div>
+<footer>
+    © 2026 Hyminhlu. Thiết kế tối giản cho giáo dục.
+</footer>
+
 </body>
 </html>
