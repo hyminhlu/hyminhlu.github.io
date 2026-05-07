@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thử Thách Bảng Cửu Chương - Thầy Minh Lu</title>
+    <style>
+        body { margin: 0; background: #87CEEB; font-family: 'Arial', sans-serif; overflow: hidden; display: flex; flex-direction: column; align-items: center; }
+        canvas { background: #fff; display: block; cursor: none; border-bottom: 10px solid #2ecc71; }
+        .ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-around; font-size: 24px; font-weight: bold; color: #2c3e50; pointer-events: none; }
+        .msg { position: absolute; top: 50%; font-size: 40px; color: #e74c3c; font-weight: bold; display: none; text-shadow: 2px 2px #fff; }
+    </style>
+</head>
+<body>
+
+<div class="ui">
+    <div>Điểm: <span id="score">0</span></div>
+    <div id="target-ques" style="background: white; padding: 5px 15px; border-radius: 20px; border: 3px solid #f1c40f;">Đang tải...</div>
+    <div>Mạng: <span id="lives">❤️❤️❤️</span></div>
+</div>
+<div id="msg" class="msg">Sai rồi! Thử lại nhé</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const scoreEl = document.getElementById("score");
+    const livesEl = document.getElementById("lives");
+    const targetEl = document.getElementById("target-ques");
+    const msgEl = document.getElementById("msg");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let score = 0;
+    let lives = 3;
+    let targetResult = 0;
+    let targetText = "";
+    let items = [];
+    let basket = { x: canvas.width / 2, y: canvas.height - 80, w: 100, h: 60 };
+
+    // Tạo câu hỏi mới
+    function nextQuestion() {
+        let num1 = Math.floor(Math.random() * 8) + 2; // Nhân từ 2 đến 9
+        let num2 = Math.floor(Math.random() * 9) + 1; // Nhân từ 1 đến 9
+        targetResult = num1 * num2;
+        targetText = `Bé hãy tìm: ${num1} x ${num2}`;
+        targetEl.innerText = targetText;
+    }
+
+    // Tạo các quả bóng chứa đáp án
+    function spawnItem() {
+        let isCorrect = Math.random() > 0.7; // 30% cơ hội ra đáp án đúng
+        let val = isCorrect ? targetResult : Math.floor(Math.random() * 81) + 1;
+        items.push({
+            x: Math.random() * (canvas.width - 50) + 25,
+            y: -50,
+            val: val,
+            speed: 2 + Math.random() * 3,
+            color: `hsl(${Math.random() * 360}, 70%, 60%)`
+        });
+    }
+
+    // Di chuyển giỏ theo chuột hoặc cảm ứng
+    canvas.addEventListener("mousemove", (e) => {
+        basket.x = e.clientX - basket.w / 2;
+    });
+
+    function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Vẽ giỏ hứng
+        ctx.fillStyle = "#8e44ad";
+        ctx.fillRect(basket.x, basket.y, basket.w, basket.h);
+        ctx.fillStyle = "#fff";
+        ctx.fillText("GIỎ HỨNG", basket.x + 15, basket.y + 35);
+
+        for (let i = 0; i < items.length; i++) {
+            let item = items[i];
+            item.y += item.speed;
+
+            // Vẽ quả bóng đáp án
+            ctx.beginPath();
+            ctx.arc(item.x, item.y, 30, 0, Math.PI * 2);
+            ctx.fillStyle = item.color;
+            ctx.fill();
+            ctx.fillStyle = "white";
+            ctx.font = "bold 20px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText(item.val, item.x, item.y + 7);
+            ctx.closePath();
+
+            // Kiểm tra va chạm
+            if (item.y + 30 > basket.y && item.x > basket.x && item.x < basket.x + basket.w) {
+                if (item.val === targetResult) {
+                    score += 10;
+                    scoreEl.innerText = score;
+                    nextQuestion();
+                } else {
+                    lives--;
+                    showMsg();
+                    livesEl.innerText = "❤️".repeat(lives);
+                    if (lives === 0) {
+                        alert("Trò chơi kết thúc! Điểm của bé là: " + score);
+                        score = 0;
+                        lives = 3;
+                        livesEl.innerText = "❤️❤️❤️";
+                    }
+                }
+                items.splice(i, 1);
+                i--;
+            } else if (item.y > canvas.height) {
+                items.splice(i, 1);
+                i--;
+            }
+        }
+    }
+
+    function showMsg() {
+        msgEl.style.display = "block";
+        setTimeout(() => { msgEl.style.display = "none"; }, 1000);
+    }
+
+    setInterval(spawnItem, 1500);
+    nextQuestion();
+
+    function gameLoop() {
+        update();
+        requestAnimationFrame(gameLoop);
+    }
+    gameLoop();
+</script>
+</body>
+</html>
