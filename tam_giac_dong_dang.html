@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Kiểm tra Tam giác đồng dạng - Thầy Minh Lu</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #f4f7f6; }
+        .box { background: white; padding: 20px; border-radius: 15px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        input { width: 50px; padding: 10px; margin: 10px; border: 1px solid #ddd; border-radius: 5px; text-align: center; }
+        button { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #result { margin-top: 20px; font-size: 20px; font-weight: bold; color: #1565c0; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Trợ lý Toán lớp 8 - Thầy Minh Lu</h2>
+    <p>Nhập 3 cạnh của hai tam giác để kiểm tra tính đồng dạng (c.c.c):</p>
+    
+    <div>
+        <strong>Δ ABC:</strong> 
+        <input type="number" id="a1" placeholder="a">
+        <input type="number" id="b1" placeholder="b">
+        <input type="number" id="c1" placeholder="c">
+    </div>
+    
+    <div>
+        <strong>Δ A'B'C':</strong> 
+        <input type="number" id="a2" placeholder="a'">
+        <input type="number" id="b2" placeholder="b'">
+        <input type="number" id="c2" placeholder="c'">
+    </div>
+
+    <button onclick="checkSimilarity()">Kiểm tra kết quả</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+    function checkSimilarity() {
+        // Lấy dữ liệu và sắp xếp thứ tự các cạnh từ nhỏ đến lớn
+        let t1 = [document.getElementById('a1').value, document.getElementById('b1').value, document.getElementById('c1').value].sort((a,b)=>a-b);
+        let t2 = [document.getElementById('a2').value, document.getElementById('b2').value, document.getElementById('c2').value].sort((a,b)=>a-b);
+        
+        if (t1.includes("") || t2.includes("")) {
+            document.getElementById('result').innerHTML = "⚠️ Thầy ơi, chưa nhập đủ số kìa!";
+            return;
+        }
+
+        let r1 = t1[0]/t2[0];
+        let r2 = t1[1]/t2[1];
+        let r3 = t1[2]/t2[2];
+
+        // Kiểm tra tỉ số (sai số nhỏ để bù trừ số thập phân)
+        if (Math.abs(r1 - r2) < 0.001 && Math.abs(r2 - r3) < 0.001) {
+            document.getElementById('result').innerHTML = "✅ Chúc mừng! Hai tam giác này ĐỒNG DẠNG với tỉ số k = " + r1.toFixed(2);
+            document.getElementById('result').style.color = "green";
+        } else {
+            document.getElementById('result').innerHTML = "❌ Rất tiếc, hai tam giác này KHÔNG đồng dạng rồi.";
+            document.getElementById('result').style.color = "red";
+        }
+    }
+</script>
+
+</body>
+</html>
