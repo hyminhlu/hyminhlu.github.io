@@ -2,24 +2,47 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Thử Thách Bảng Cửu Chương - Thầy Minh Lu</title>
     <style>
-        body { margin: 0; background: #87CEEB; font-family: 'Arial', sans-serif; overflow: hidden; display: flex; flex-direction: column; align-items: center; }
-        canvas { background: #fff; display: block; cursor: none; border-bottom: 10px solid #2ecc71; }
-        .ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-around; font-size: 24px; font-weight: bold; color: #2c3e50; pointer-events: none; }
-        .msg { position: absolute; top: 50%; font-size: 40px; color: #e74c3c; font-weight: bold; display: none; text-shadow: 2px 2px #fff; }
+        body { margin: 0; background: #87CEEB; font-family: sans-serif; overflow: hidden; touch-action: none; }
+        canvas { background: #fff; display: block; }
+        
+        /* Giao diện điểm số và câu hỏi */
+        .ui-top {
+            position: absolute; top: 0; width: 100%; height: 60px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 15px; box-sizing: border-box; background: rgba(255,255,255,0.8);
+            font-size: 18px; font-weight: bold; z-index: 10;
+        }
+        #target-ques { color: #d35400; font-size: 20px; }
+
+        /* Nút điều khiển ảo cho điện thoại */
+        .controls {
+            position: absolute; bottom: 20px; width: 100%;
+            display: flex; justify-content: space-around; padding: 0 20px; box-sizing: border-box;
+        }
+        .ctrl-btn {
+            width: 80px; height: 80px; background: rgba(0,0,0,0.3);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 40px; color: white; user-select: none; -webkit-tap-highlight-color: transparent;
+        }
     </style>
 </head>
 <body>
 
-<div class="ui">
-    <div>Điểm: <span id="score">0</span></div>
-    <div id="target-ques" style="background: white; padding: 5px 15px; border-radius: 20px; border: 3px solid #f1c40f;">Đang tải...</div>
-    <div>Mạng: <span id="lives">❤️❤️❤️</span></div>
+<div class="ui-top">
+    <div>⭐ <span id="score">0</span></div>
+    <div id="target-ques">Đang tải...</div>
+    <div id="lives">❤️❤️❤️</div>
 </div>
-<div id="msg" class="msg">Sai rồi! Thử lại nhé</div>
 
 <canvas id="gameCanvas"></canvas>
+
+<div class="controls">
+    <div class="ctrl-btn" id="btn-left">◀️</div>
+    <div class="ctrl-btn" id="btn-right">▶️</div>
+</div>
 
 <script>
     const canvas = document.getElementById("gameCanvas");
@@ -27,84 +50,102 @@
     const scoreEl = document.getElementById("score");
     const livesEl = document.getElementById("lives");
     const targetEl = document.getElementById("target-ques");
-    const msgEl = document.getElementById("msg");
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Tự động điều chỉnh kích thước theo màn hình điện thoại
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        basket.y = canvas.height - 150; // Đẩy giỏ lên trên các nút điều khiển
+    }
 
     let score = 0;
     let lives = 3;
     let targetResult = 0;
-    let targetText = "";
     let items = [];
-    let basket = { x: canvas.width / 2, y: canvas.height - 80, w: 100, h: 60 };
+    let basket = { x: 0, y: 0, w: 80, h: 50 };
+    let moveLeft = false;
+    let moveRight = false;
 
-    // Tạo câu hỏi mới
+    window.addEventListener('resize', resize);
+    
+    // Điều khiển bằng nút bấm ảo (Hỗ trợ cả Touch và Mouse)
+    const btnLeft = document.getElementById('btn-left');
+    const btnRight = document.getElementById('btn-right');
+
+    const startLeft = () => moveLeft = true;
+    const stopLeft = () => moveLeft = false;
+    const startRight = () => moveRight = true;
+    const stopRight = () => moveRight = false;
+
+    btnLeft.addEventListener('touchstart', startLeft);
+    btnLeft.addEventListener('touchend', stopLeft);
+    btnRight.addEventListener('touchstart', startRight);
+    btnRight.addEventListener('touchend', stopRight);
+    
+    // Hỗ trợ cả chuột cho máy tính
+    btnLeft.addEventListener('mousedown', startLeft);
+    btnLeft.addEventListener('mouseup', stopLeft);
+    btnRight.addEventListener('mousedown', startRight);
+    btnRight.addEventListener('mouseup', stopRight);
+
     function nextQuestion() {
-        let num1 = Math.floor(Math.random() * 8) + 2; // Nhân từ 2 đến 9
-        let num2 = Math.floor(Math.random() * 9) + 1; // Nhân từ 1 đến 9
-        targetResult = num1 * num2;
-        targetText = `Bé hãy tìm: ${num1} x ${num2}`;
-        targetEl.innerText = targetText;
+        let n1 = Math.floor(Math.random() * 8) + 2;
+        let n2 = Math.floor(Math.random() * 9) + 1;
+        targetResult = n1 * n2;
+        targetEl.innerText = `${n1} x ${n2} = ?`;
     }
 
-    // Tạo các quả bóng chứa đáp án
     function spawnItem() {
-        let isCorrect = Math.random() > 0.7; // 30% cơ hội ra đáp án đúng
-        let val = isCorrect ? targetResult : Math.floor(Math.random() * 81) + 1;
+        let isCorrect = Math.random() > 0.7;
+        let val = isCorrect ? targetResult : Math.floor(Math.random() * 80) + 2;
         items.push({
-            x: Math.random() * (canvas.width - 50) + 25,
-            y: -50,
+            x: Math.random() * (canvas.width - 40) + 20,
+            y: -20,
             val: val,
-            speed: 2 + Math.random() * 3,
-            color: `hsl(${Math.random() * 360}, 70%, 60%)`
+            speed: 3 + Math.random() * 2,
+            color: `hsl(${Math.random() * 360}, 70%, 50%)`
         });
     }
-
-    // Di chuyển giỏ theo chuột hoặc cảm ứng
-    canvas.addEventListener("mousemove", (e) => {
-        basket.x = e.clientX - basket.w / 2;
-    });
 
     function update() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Vẽ giỏ hứng
-        ctx.fillStyle = "#8e44ad";
+        // Di chuyển giỏ
+        if (moveLeft && basket.x > 0) basket.x -= 7;
+        if (moveRight && basket.x < canvas.width - basket.w) basket.x += 7;
+
+        // Vẽ giỏ
+        ctx.fillStyle = "#2c3e50";
         ctx.fillRect(basket.x, basket.y, basket.w, basket.h);
-        ctx.fillStyle = "#fff";
-        ctx.fillText("GIỎ HỨNG", basket.x + 15, basket.y + 35);
+        ctx.fillStyle = "white";
+        ctx.font = "14px Arial";
+        ctx.fillText("HỨNG", basket.x + 20, basket.y + 30);
 
         for (let i = 0; i < items.length; i++) {
             let item = items[i];
             item.y += item.speed;
 
-            // Vẽ quả bóng đáp án
             ctx.beginPath();
-            ctx.arc(item.x, item.y, 30, 0, Math.PI * 2);
+            ctx.arc(item.x, item.y, 25, 0, Math.PI * 2);
             ctx.fillStyle = item.color;
             ctx.fill();
             ctx.fillStyle = "white";
-            ctx.font = "bold 20px Arial";
+            ctx.font = "bold 18px Arial";
             ctx.textAlign = "center";
             ctx.fillText(item.val, item.x, item.y + 7);
-            ctx.closePath();
 
             // Kiểm tra va chạm
-            if (item.y + 30 > basket.y && item.x > basket.x && item.x < basket.x + basket.w) {
+            if (item.y + 25 > basket.y && item.x > basket.x && item.x < basket.x + basket.w) {
                 if (item.val === targetResult) {
                     score += 10;
                     scoreEl.innerText = score;
                     nextQuestion();
                 } else {
                     lives--;
-                    showMsg();
                     livesEl.innerText = "❤️".repeat(lives);
                     if (lives === 0) {
-                        alert("Trò chơi kết thúc! Điểm của bé là: " + score);
-                        score = 0;
-                        lives = 3;
-                        livesEl.innerText = "❤️❤️❤️";
+                        alert("Hết mạng! Điểm của em: " + score);
+                        location.reload();
                     }
                 }
                 items.splice(i, 1);
@@ -116,19 +157,15 @@
         }
     }
 
-    function showMsg() {
-        msgEl.style.display = "block";
-        setTimeout(() => { msgEl.style.display = "none"; }, 1000);
-    }
-
-    setInterval(spawnItem, 1500);
+    resize();
     nextQuestion();
-
-    function gameLoop() {
+    setInterval(spawnItem, 2000);
+    
+    function loop() {
         update();
-        requestAnimationFrame(gameLoop);
+        requestAnimationFrame(loop);
     }
-    gameLoop();
+    loop();
 </script>
 </body>
 </html>
