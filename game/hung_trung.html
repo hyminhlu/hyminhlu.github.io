@@ -3,39 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thử Thách Bảng Cửu Chương - Thầy Minh Lu</title>
+    <title>Hứng Phép Tính - Thầy Minh Lu</title>
     <style>
-        body { margin: 0; background: #87CEEB; font-family: sans-serif; overflow: hidden; touch-action: none; }
+        body { margin: 0; background: #87CEEB; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; touch-action: none; }
         canvas { background: #fff; display: block; }
         
-        /* Giao diện điểm số và câu hỏi */
+        /* Giao diện thông tin phía trên */
         .ui-top {
-            position: absolute; top: 0; width: 100%; height: 60px;
+            position: absolute; top: 0; width: 100%; height: 70px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 15px; box-sizing: border-box; background: rgba(255,255,255,0.8);
-            font-size: 18px; font-weight: bold; z-index: 10;
+            padding: 0 20px; box-sizing: border-box; background: rgba(255,255,255,0.9);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 10;
         }
-        #target-ques { color: #d35400; font-size: 20px; }
+        #target-ques { 
+            background: #f1c40f; padding: 8px 20px; border-radius: 25px;
+            color: #2c3e50; font-size: 22px; font-weight: bold; border: 3px solid #d35400;
+        }
+        .stats { font-size: 20px; font-weight: bold; color: #2c3e50; }
 
-        /* Nút điều khiển ảo cho điện thoại */
+        /* Nút điều khiển cho điện thoại */
         .controls {
-            position: absolute; bottom: 20px; width: 100%;
-            display: flex; justify-content: space-around; padding: 0 20px; box-sizing: border-box;
+            position: absolute; bottom: 30px; width: 100%;
+            display: flex; justify-content: space-around; padding: 0 30px; box-sizing: border-box;
+            pointer-events: none; /* Chỉ các nút bấm mới nhận sự kiện */
         }
         .ctrl-btn {
-            width: 80px; height: 80px; background: rgba(0,0,0,0.3);
+            width: 70px; height: 70px; background: rgba(0,0,0,0.2);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 40px; color: white; user-select: none; -webkit-tap-highlight-color: transparent;
+            font-size: 35px; color: white; user-select: none; pointer-events: auto;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+        .ctrl-btn:active { background: rgba(0,0,0,0.5); transform: scale(0.9); }
+
+        /* Thông báo khi sai */
+        #msg {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 30px; font-weight: bold; color: #e74c3c; display: none;
+            background: rgba(255,255,255,0.8); padding: 10px 20px; border-radius: 10px;
         }
     </style>
 </head>
 <body>
 
 <div class="ui-top">
-    <div>⭐ <span id="score">0</span></div>
+    <div class="stats">⭐ <span id="score">0</span></div>
     <div id="target-ques">Đang tải...</div>
-    <div id="lives">❤️❤️❤️</div>
+    <div class="stats" id="lives">❤️❤️❤️</div>
 </div>
+
+<div id="msg">Sai rồi, bé tính lại nhé! ❌</div>
 
 <canvas id="gameCanvas"></canvas>
 
@@ -50,60 +66,75 @@
     const scoreEl = document.getElementById("score");
     const livesEl = document.getElementById("lives");
     const targetEl = document.getElementById("target-ques");
+    const msgEl = document.getElementById("msg");
 
-    // Tự động điều chỉnh kích thước theo màn hình điện thoại
-    function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        basket.y = canvas.height - 150; // Đẩy giỏ lên trên các nút điều khiển
-    }
-
+    // Khởi tạo thông số
     let score = 0;
     let lives = 3;
     let targetResult = 0;
     let items = [];
-    let basket = { x: 0, y: 0, w: 80, h: 50 };
+    let basket = { x: 0, y: 0, w: 100, h: 60 };
     let moveLeft = false;
     let moveRight = false;
 
-    window.addEventListener('resize', resize);
-    
-    // Điều khiển bằng nút bấm ảo (Hỗ trợ cả Touch và Mouse)
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        basket.y = canvas.height - 140;
+        if (basket.x === 0) basket.x = canvas.width / 2 - basket.w / 2;
+    }
+
+    // 1. ĐIỀU KHIỂN: BÀN PHÍM (Máy tính)
+    window.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") moveLeft = true;
+        if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") moveRight = true;
+    });
+    window.addEventListener("keyup", (e) => {
+        if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") moveLeft = false;
+        if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") moveRight = false;
+    });
+
+    // 2. ĐIỀU KHIỂN: CẢM ỨNG (Điện thoại)
     const btnLeft = document.getElementById('btn-left');
     const btnRight = document.getElementById('btn-right');
 
-    const startLeft = () => moveLeft = true;
-    const stopLeft = () => moveLeft = false;
-    const startRight = () => moveRight = true;
-    const stopRight = () => moveRight = false;
-
-    btnLeft.addEventListener('touchstart', startLeft);
-    btnLeft.addEventListener('touchend', stopLeft);
-    btnRight.addEventListener('touchstart', startRight);
-    btnRight.addEventListener('touchend', stopRight);
+    btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); moveLeft = true; });
+    btnLeft.addEventListener('touchend', () => moveLeft = false);
+    btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); moveRight = true; });
+    btnRight.addEventListener('touchend', () => moveRight = false);
     
-    // Hỗ trợ cả chuột cho máy tính
-    btnLeft.addEventListener('mousedown', startLeft);
-    btnLeft.addEventListener('mouseup', stopLeft);
-    btnRight.addEventListener('mousedown', startRight);
-    btnRight.addEventListener('mouseup', stopRight);
+    // Hỗ trợ chuột cho nút bấm ảo
+    btnLeft.addEventListener('mousedown', () => moveLeft = true);
+    btnLeft.addEventListener('mouseup', () => moveLeft = false);
+    btnRight.addEventListener('mousedown', () => moveRight = true);
+    btnRight.addEventListener('mouseup', () => moveRight = false);
 
     function nextQuestion() {
-        let n1 = Math.floor(Math.random() * 8) + 2;
-        let n2 = Math.floor(Math.random() * 9) + 1;
+        let n1 = Math.floor(Math.random() * 8) + 2; // Từ 2-9
+        let n2 = Math.floor(Math.random() * 9) + 1; // Từ 1-9
         targetResult = n1 * n2;
         targetEl.innerText = `${n1} x ${n2} = ?`;
     }
 
     function spawnItem() {
-        let isCorrect = Math.random() > 0.5;
-        let val = isCorrect ? targetResult : Math.floor(Math.random() * 80) + 2;
+        // Tỷ lệ ra số đúng là 60%
+        let isCorrect = Math.random() > 0.4;
+        let val;
+        if (isCorrect) {
+            val = targetResult;
+        } else {
+            // Số sai loanh quanh kết quả đúng +/- 10
+            let offset = Math.floor(Math.random() * 20) - 10;
+            val = targetResult + offset;
+            if (val === targetResult || val <= 0) val = targetResult + 5;
+        }
+
         items.push({
-            x: Math.random() * (canvas.width - 40) + 20,
-            y: -20,
+            x: Math.random() * (canvas.width - 60) + 30,
+            y: -30,
             val: val,
-            speed: 3 + Math.random() * 2,
-            color: `hsl(${Math.random() * 360}, 70%, 50%)`
+            speed: 2.5 + Math.random() * 2,
+            color: isCorrect ? "#2ecc71" : `hsl(${Math.random() * 360}, 70%, 60%)`
         });
     }
 
@@ -111,31 +142,39 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Di chuyển giỏ
-        if (moveLeft && basket.x > 0) basket.x -= 7;
-        if (moveRight && basket.x < canvas.width - basket.w) basket.x += 7;
+        if (moveLeft && basket.x > 0) basket.x -= 8;
+        if (moveRight && basket.x < canvas.width - basket.w) basket.x += 8;
 
-        // Vẽ giỏ
-        ctx.fillStyle = "#2c3e50";
-        ctx.fillRect(basket.x, basket.y, basket.w, basket.h);
+        // Vẽ giỏ (Hình cái khay)
+        ctx.fillStyle = "#8e44ad";
+        ctx.beginPath();
+        ctx.roundRect(basket.x, basket.y, basket.w, basket.h, 10);
+        ctx.fill();
         ctx.fillStyle = "white";
-        ctx.font = "14px Arial";
-        ctx.fillText("HỨNG", basket.x + 20, basket.y + 30);
+        ctx.font = "bold 16px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("HỨNG", basket.x + basket.w/2, basket.y + 35);
 
         for (let i = 0; i < items.length; i++) {
             let item = items[i];
             item.y += item.speed;
 
+            // Vẽ quả bóng đáp án
             ctx.beginPath();
-            ctx.arc(item.x, item.y, 25, 0, Math.PI * 2);
+            ctx.arc(item.x, item.y, 28, 0, Math.PI * 2);
             ctx.fillStyle = item.color;
             ctx.fill();
+            ctx.strokeStyle = "rgba(0,0,0,0.1)";
+            ctx.stroke();
+            
             ctx.fillStyle = "white";
-            ctx.font = "bold 18px Arial";
-            ctx.textAlign = "center";
-            ctx.fillText(item.val, item.x, item.y + 7);
+            ctx.font = "bold 22px Arial";
+            ctx.fillText(item.val, item.x, item.y + 8);
 
             // Kiểm tra va chạm
-            if (item.y + 25 > basket.y && item.x > basket.x && item.x < basket.x + basket.w) {
+            if (item.y + 28 > basket.y && item.y < basket.y + basket.h &&
+                item.x > basket.x && item.x < basket.x + basket.w) {
+                
                 if (item.val === targetResult) {
                     score += 10;
                     scoreEl.innerText = score;
@@ -143,29 +182,38 @@
                 } else {
                     lives--;
                     livesEl.innerText = "❤️".repeat(lives);
+                    showError();
                     if (lives === 0) {
-                        alert("Hết mạng! Điểm của em: " + score);
+                        alert("Trò chơi kết thúc! Điểm của bé: " + score);
                         location.reload();
                     }
                 }
                 items.splice(i, 1);
                 i--;
-            } else if (item.y > canvas.height) {
+            } else if (item.y > canvas.height + 30) {
                 items.splice(i, 1);
                 i--;
             }
         }
     }
 
+    function showError() {
+        msgEl.style.display = "block";
+        setTimeout(() => msgEl.style.display = "none", 1000);
+    }
+
     resize();
     nextQuestion();
-    setInterval(spawnItem, 1000);
+    window.addEventListener('resize', resize);
     
-    function loop() {
+    // Nhịp độ rơi: 1.5 giây một số
+    setInterval(spawnItem, 1500);
+
+    function gameLoop() {
         update();
-        requestAnimationFrame(loop);
+        requestAnimationFrame(gameLoop);
     }
-    loop();
+    gameLoop();
 </script>
 </body>
 </html>
