@@ -96,7 +96,7 @@
     }
 
     function spawnItem() {
-        let isCorrect = Math.random() > 0.7;
+        let isCorrect = Math.random() > 0.5;
         let val = isCorrect ? targetResult : Math.floor(Math.random() * 80) + 2;
         items.push({
             x: Math.random() * (canvas.width - 40) + 20,
@@ -159,7 +159,7 @@
 
     resize();
     nextQuestion();
-    setInterval(spawnItem, 2000);
+    setInterval(spawnItem, 1000);
     
     function loop() {
         update();
