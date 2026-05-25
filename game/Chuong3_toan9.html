@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Trắc Nghiệm Toán 9 - Chương III</title>
+    <style>
+        :root { --bg: #2d3436; --primary: #e17055; --text: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        #game-container { width: 100%; max-width: 600px; background: #636e72; padding: 20px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        h2 { text-align: center; color: var(--primary); }
+        .option { background: #2d3436; border: 2px solid var(--primary); color: white; padding: 15px; margin: 10px 0; border-radius: 8px; cursor: pointer; transition: 0.2s; width: 100%; box-sizing: border-box; }
+        .option:hover { background: var(--primary); }
+        #explanation { margin-top: 20px; padding: 15px; background: #2d3436; border-left: 5px solid #e17055; display: none; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <h2>Chương III: Căn bậc hai & Căn bậc ba</h2>
+    <div id="question-box"></div>
+    <div id="options-box"></div>
+    <div id="explanation"></div>
+</div>
+
+<script>
+const quizData = [
+    { q: "Căn bậc hai số học của 16 là?", a: ["4", "-4", "8", "256"], correct: 0, exp: "Căn bậc hai số học của một số không âm luôn là một số không âm, √16 = 4." },
+    { q: "Biểu thức √x có nghĩa khi nào?", a: ["x > 0", "x < 0", "x ≥ 0", "x ≠ 0"], correct: 2, exp: "Điều kiện xác định của căn bậc hai là biểu thức trong căn phải không âm (x ≥ 0)." },
+    { q: "Giá trị của √(-5)² là?", a: ["-5", "5", "25", "-25"], correct: 1, exp: "√a² = |a|. Vậy √(-5)² = |-5| = 5." },
+    { q: "Kết quả của √4.9 là?", a: ["6", "13", "36", "7"], correct: 0, exp: "√36 = 6." },
+    { q: "Rút gọn biểu thức √25a² với a < 0 là?", a: ["5a", "-5a", "5|a|", "25a"], correct: 1, exp: "√25a² = 5|a|. Vì a < 0 nên |a| = -a, kết quả là -5a." },
+    { q: "Căn bậc ba của -8 là?", a: ["2", "-2", "4", "không có"], correct: 1, exp: "(-2)³ = -8 nên căn bậc ba của -8 là -2." },
+    { q: "Trục căn thức ở mẫu của 1/√3 là?", a: ["√3/3", "√3", "1/3", "3"], correct: 0, exp: "Nhân cả tử và mẫu với √3 ta được √3/3." },
+    { q: "Giá trị của √(√2 - 1)² là?", a: ["√2 - 1", "1 - √2", "√2 + 1", "0"], correct: 0, exp: "√(√2 - 1)² = |√2 - 1|. Vì √2 > 1 nên giá trị là √2 - 1." },
+    { q: "Đưa thừa số vào trong căn: 2√3 bằng?", a: ["√6", "√12", "√18", "√36"], correct: 1, exp: "2√3 = √(2² . 3) = √12." },
+    { q: "Căn bậc hai của 0 là?", a: ["Không có", "1", "0", "vô số"], correct: 2, exp: "√0 = 0." },
+    { q: "Giá trị của √27 / √3 là?", a: ["3", "9", "√9", "√24"], correct: 0, exp: "√27 / √3 = √(27/3) = √9 = 3." },
+    { q: "Biểu thức √x - 3 xác định khi?", a: ["x > 3", "x < 3", "x ≥ 3", "x ≥ 9"], correct: 2, exp: "Điều kiện là x - 3 ≥ 0, tức là x ≥ 3." }
+];
+
+let currentQ = 0;
+function loadQuestion() {
+    const qData = quizData[currentQ];
+    document.getElementById('question-box').innerHTML = `<h3>Câu ${currentQ + 1}: ${qData.q}</h3>`;
+    const box = document.getElementById('options-box');
+    box.innerHTML = '';
+    qData.a.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(i);
+        box.appendChild(btn);
+    });
+    document.getElementById('explanation').style.display = 'none';
+}
+function checkAnswer(idx) {
+    const expDiv = document.getElementById('explanation');
+    expDiv.style.display = 'block';
+    const isCorrect = idx === quizData[currentQ].correct;
+    expDiv.innerHTML = `<strong>${isCorrect ? 'Tuyệt vời!' : 'Chưa đúng rồi!'}</strong><br>${quizData[currentQ].exp}<br><br>
+        <button onclick="next()" style="padding:10px; cursor:pointer;">${currentQ === quizData.length - 1 ? 'Kết thúc' : 'Câu tiếp theo'}</button>`;
+}
+function next() {
+    currentQ++;
+    if(currentQ < quizData.length) loadQuestion();
+    else { document.body.innerHTML = '<h2>Hoàn thành chương III! Bạn đã nắm vững căn thức!</h2><button onclick="location.reload()">Chơi lại</button>'; }
+}
+loadQuestion();
+</script>
+</body>
+</html>

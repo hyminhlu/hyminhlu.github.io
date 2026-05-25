@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Trắc Nghiệm Toán 9 - Chương II (Bộ 2)</title>
+    <style>
+        :root { --bg: #2c3e50; --primary: #3498db; --text: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        #game-container { width: 100%; max-width: 600px; background: #34495e; padding: 20px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        h2 { text-align: center; color: var(--primary); }
+        .option { background: #2c3e50; border: 2px solid var(--primary); color: white; padding: 15px; margin: 10px 0; border-radius: 8px; cursor: pointer; transition: 0.2s; width: 100%; box-sizing: border-box; }
+        .option:hover { background: var(--primary); }
+        #explanation { margin-top: 20px; padding: 15px; background: #2c3e50; border-left: 5px solid #3498db; display: none; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <h2>Chương II: Phương trình và Bất phương trình bậc nhất một ẩn</h2>
+    <div id="question-box"></div>
+    <div id="options-box"></div>
+    <div id="explanation"></div>
+</div>
+
+<script>
+const quizData = [
+    { q: "Tập nghiệm của bất phương trình 2x + 1 ≥ 5 là?", a: ["x ≥ 1", "x ≥ 2", "x ≤ 2", "x ≥ 3"], correct: 1, exp: "2x ≥ 4 => x ≥ 2." },
+    { q: "Phương trình |x| = 5 có tập nghiệm là?", a: ["{5}", "{-5}", "{5; -5}", "Vô nghiệm"], correct: 2, exp: "Giá trị tuyệt đối của x bằng 5 thì x có thể là 5 hoặc -5." },
+    { q: "Bất phương trình nào tương đương với x > 3?", a: ["x + 1 > 4", "x - 2 > 0", "2x > 5", "x + 5 > 7"], correct: 0, exp: "x + 1 > 4 <=> x > 3." },
+    { q: "Nghiệm của bất phương trình -3x + 9 > 0 là?", a: ["x > 3", "x < 3", "x > -3", "x < -3"], correct: 1, exp: "-3x > -9 => Chia cho -3 và đổi chiều => x < 3." },
+    { q: "Phương trình |x - 2| = 0 có nghiệm là?", a: ["x = 2", "x = -2", "x = 0", "x = 1"], correct: 0, exp: "x - 2 = 0 => x = 2." },
+    { q: "Bất phương trình 0x + 5 > 0 nghiệm đúng với?", a: ["x > 0", "x < 0", "Mọi x", "Không có x"], correct: 2, exp: "5 > 0 luôn đúng với mọi giá trị của x." },
+    { q: "Giải phương trình 2x + 5 = x + 7, ta được?", a: ["x = 1", "x = 2", "x = 3", "x = 4"], correct: 1, exp: "2x - x = 7 - 5 => x = 2." },
+    { q: "Giá trị x = -1 là nghiệm của bất phương trình nào?", a: ["x + 2 > 0", "x + 2 < 0", "2x > 0", "x + 1 > 2"], correct: 0, exp: "Thay x = -1: -1 + 2 = 1 > 0 (đúng)." },
+    { q: "Bất phương trình bậc nhất một ẩn luôn có dạng nào?", a: ["ax + b ≠ 0", "ax + b < 0 hoặc ax + b > 0", "ax² + b > 0", "ax = b"], correct: 1, exp: "Bất phương trình bậc nhất một ẩn chứa dấu <, >, ≤ hoặc ≥." },
+    { q: "Khi chuyển hạng tử trong phương trình, ta phải?", a: ["Đổi dấu hạng tử", "Giữ nguyên dấu", "Nhân với -1", "Chia cho 2"], correct: 0, exp: "Quy tắc chuyển vế: Khi chuyển một hạng tử từ vế này sang vế kia, ta phải đổi dấu." },
+    { q: "Tập nghiệm của bất phương trình x - 5 ≤ 0 là?", a: ["x ≤ 5", "x ≥ 5", "x < 5", "x > 5"], correct: 0, exp: "x ≤ 5." },
+    { q: "Phương trình 2(x + 1) = 2x + 2 có bao nhiêu nghiệm?", a: ["1", "2", "Vô số", "Vô nghiệm"], correct: 2, exp: "2x + 2 = 2x + 2 (luôn đúng) nên có vô số nghiệm." }
+];
+
+let currentQ = 0;
+function loadQuestion() {
+    const qData = quizData[currentQ];
+    document.getElementById('question-box').innerHTML = `<h3>Câu ${currentQ + 1}: ${qData.q}</h3>`;
+    const box = document.getElementById('options-box');
+    box.innerHTML = '';
+    qData.a.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(i);
+        box.appendChild(btn);
+    });
+    document.getElementById('explanation').style.display = 'none';
+}
+function checkAnswer(idx) {
+    const expDiv = document.getElementById('explanation');
+    expDiv.style.display = 'block';
+    const isCorrect = idx === quizData[currentQ].correct;
+    expDiv.innerHTML = `<strong>${isCorrect ? 'Tuyệt vời!' : 'Chưa đúng rồi!'}</strong><br>${quizData[currentQ].exp}<br><br>
+        <button onclick="next()" style="padding:10px; cursor:pointer;">${currentQ === quizData.length - 1 ? 'Kết thúc' : 'Câu tiếp theo'}</button>`;
+}
+function next() {
+    currentQ++;
+    if(currentQ < quizData.length) loadQuestion();
+    else { document.body.innerHTML = '<h2>Hoàn thành bộ đề ôn tập số 2!</h2><button onclick="location.reload()">Làm lại</button>'; }
+}
+loadQuestion();
+</script>
+</body>
+</html>
