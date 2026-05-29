@@ -1,53 +1,69 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tetris Điều Khiển Bằng Giọng Nói</title>
+    <title>Voice Controlled Tetris (English Version)</title>
     <style>
         body {
             background: #202028;
             color: #fff;
-            font-family: sans-serif;
-            font-size: 2em;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.8em;
             text-align: center;
+            margin-top: 20px;
         }
         canvas {
-            border: solid 2px #fff;
-            background-color: #000;
+            border: solid 4px #444;
+            background-color: #111;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
-        #status {
+        #score {
+            font-weight: bold;
+            color: #ffcc00;
+            margin-bottom: 10px;
+        }
+        .info-box {
             font-size: 0.5em;
-            color: #888;
+            color: #bbb;
             margin-top: 10px;
+            background: #2a2a35;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 8px;
+            min-width: 300px;
         }
         #command {
             color: #00ffcc;
             font-weight: bold;
+            font-size: 1.2em;
         }
     </style>
 </head>
 <body>
-    <div>TETRIS GIỌNG NÓI</div>
-    <div id="score">Điểm: 0</div>
+    <div>VOICE TETRIS</div>
+    <div id="score">Score: 0</div>
     <canvas id="tetris" width="240" height="400"></canvas>
-    <div id="status">Trạng thái micro: <span id="mic-status">Đang thiết lập...</span></div>
-    <div id="status">Lệnh vừa nhận: <span id="command">Chưa có</span></div>
+    
+    <br>
+    <div class="info-box">
+        <div id="mic-status" style="color: yellow;">👉 CLICK ANYWHERE TO START MIC 👈</div>
+        <div style="margin-top: 5px;">Say: <span style="color:#ff6666">"Left"</span> | <span style="color:#66ff66">"Right"</span> | <span style="color:#66ccff">"Rotate"</span> | <span style="color:#cc66ff">"Down"</span></div>
+        <hr style="border-color: #444; margin: 8px 0;">
+        <div>AI Heard: <span id="command">None</span></div>
+    </div>
 
     <script>
-        // --- 1. KHỞI TẠO GAME TETRIS ---
+        // --- 1. TETRIS GAME LOGIC (STANDARD) ---
         const canvas = document.getElementById('tetris');
         const context = canvas.getContext('2d');
-        context.scale(20, 20); // Phóng to các ô vuông (12x20 ô)
+        context.scale(20, 20);
 
-        // Xóa hàng khi đầy
         function arenaSweep() {
             let rowCount = 1;
             outer: for (let y = arena.length - 1; y > 0; --y) {
                 for (let x = 0; x < arena[y].length; ++x) {
-                    if (arena[y][x] === 0) {
-                        continue outer;
-                    }
+                    if (arena[y][x] === 0) continue outer;
                 }
                 const row = arena.splice(y, 1)[0].fill(0);
                 arena.unshift(row);
@@ -58,14 +74,11 @@
             updateScore();
         }
 
-        // Kiểm tra va chạm
         function collide(arena, player) {
             const [m, o] = [player.matrix, player.pos];
             for (let y = 0; y < m.length; ++y) {
                 for (let x = 0; x < m[y].length; ++x) {
-                    if (m[y][x] !== 0 &&
-                       (arena[y + o.y] &&
-                        arena[y + o.y][x + o.x]) !== 0) {
+                    if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
                         return true;
                     }
                 }
@@ -73,35 +86,22 @@
             return false;
         }
 
-        // Tạo bàn cờ
         function createMatrix(w, h) {
             const matrix = [];
-            while (h--) {
-                matrix.push(new Array(w).fill(0));
-            }
+            while (h--) matrix.push(new Array(w).fill(0));
             return matrix;
         }
 
-        // Tạo các loại gạch
         function createPiece(type) {
-            if (type === 'T') {
-                return [[0, 0, 0], [1, 1, 1], [0, 1, 0]];
-            } else if (type === 'O') {
-                return [[2, 2], [2, 2]];
-            } else if (type === 'L') {
-                return [[0, 3, 0], [0, 3, 0], [0, 3, 3]];
-            } else if (type === 'J') {
-                return [[0, 4, 0], [0, 4, 0], [4, 4, 0]];
-            } else if (type === 'I') {
-                return [[0, 5, 0, 0], [0, 5, 0, 0], [0, 5, 0, 0], [0, 5, 0, 0]];
-            } else if (type === 'S') {
-                return [[0, 6, 6], [6, 6, 0], [0, 0, 0]];
-            } else if (type === 'Z') {
-                return [[7, 7, 0], [0, 7, 7], [0, 0, 0]];
-            }
+            if (type === 'T') return [[0, 0, 0], [1, 1, 1], [0, 1, 0]];
+            else if (type === 'O') return [[2, 2], [2, 2]];
+            else if (type === 'L') return [[0, 3, 0], [0, 3, 0], [0, 3, 3]];
+            else if (type === 'J') return [[0, 4, 0], [0, 4, 0], [4, 4, 0]];
+            else if (type === 'I') return [[0, 5, 0, 0], [0, 5, 0, 0], [0, 5, 0, 0], [0, 5, 0, 0]];
+            else if (type === 'S') return [[0, 6, 6], [6, 6, 0], [0, 0, 0]];
+            else if (type === 'Z') return [[7, 7, 0], [0, 7, 7], [0, 0, 0]];
         }
 
-        // Vẽ ma trận (bàn cờ hoặc viên gạch)
         function drawMatrix(matrix, offset) {
             const colors = [null, '#FF0D72', '#0DC2FF', '#0DFF72', '#F538FF', '#FF8E0D', '#FFE138', '#3877FF'];
             matrix.forEach((row, y) => {
@@ -115,32 +115,25 @@
         }
 
         function draw() {
-            context.fillStyle = '#000';
+            context.fillStyle = '#111';
             context.fillRect(0, 0, canvas.width, canvas.height);
             drawMatrix(arena, {x: 0, y: 0});
             drawMatrix(player.matrix, player.pos);
         }
 
-        // Gom gạch lại khi chạm đáy
         function merge(arena, player) {
             player.matrix.forEach((row, y) => {
                 row.forEach((value, x) => {
-                    if (value !== 0) {
-                        arena[y + player.pos.y][x + player.pos.x] = value;
-                    }
+                    if (value !== 0) arena[y + player.pos.y][x + player.pos.x] = value;
                 });
             });
         }
 
-        // Hàm di chuyển gạch
         function playerMove(dir) {
             player.pos.x += dir;
-            if (collide(arena, player)) {
-                player.pos.x -= dir;
-            }
+            if (collide(arena, player)) player.pos.x -= dir;
         }
 
-        // Reset khi thua hoặc đổi gạch mới
         function playerReset() {
             const pieces = 'ILJOTSZ';
             player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
@@ -153,7 +146,6 @@
             }
         }
 
-        // Hàm rơi tự động (giữ nguyên để game có độ khó tăng dần)
         function playerDrop() {
             player.pos.y++;
             if (collide(arena, player)) {
@@ -165,7 +157,6 @@
             dropCounter = 0;
         }
 
-        // Xoay gạch
         function playerRotate(dir) {
             const pos = player.pos.x;
             let offset = 1;
@@ -192,127 +183,97 @@
         }
 
         let dropCounter = 0;
-        let dropInterval = 1000; // Tốc độ rơi tự động (1 giây)
+        let dropInterval = 1500; // Tăng thời gian rơi lên 1.5 giây để người chơi kịp nói
         let lastTime = 0;
 
         function update(time = 0) {
             const deltaTime = time - lastTime;
             lastTime = time;
             dropCounter += deltaTime;
-            if (dropCounter > dropInterval) {
-                playerDrop();
-            }
+            if (dropCounter > dropInterval) playerDrop();
             draw();
             requestAnimationFrame(update);
         }
 
         function updateScore() {
-            document.getElementById('score').innerText = "Điểm: " + player.score;
+            document.getElementById('score').innerText = "Score: " + player.score;
         }
 
         const arena = createMatrix(12, 20);
-        const player = {
-            pos: {x: 0, y: 0},
-            matrix: null,
-            score: 0,
-        };
+        const player = { pos: {x: 0, y: 0}, matrix: null, score: 0 };
 
         playerReset();
         updateScore();
         update();
 
 
-        // --- 2. TÍCH HỢP AI NHẬN DIỆN GIỌNG NÓI ---
+        // --- 2. ENGLISH VOICE RECOGNITION AI ---
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const micStatus = document.getElementById('mic-status');
         const commandDisplay = document.getElementById('command');
 
         if (!SpeechRecognition) {
-            micStatus.innerText = "Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Hãy dùng Chrome hoặc Edge.";
+            micStatus.innerText = "Browser not supported. Please use Chrome or Edge.";
             micStatus.style.color = "red";
         } else {
             const recognition = new SpeechRecognition();
-            recognition.lang = 'vi-VN'; // Đặt ngôn ngữ là Tiếng Việt
-            recognition.continuous = true; // Nhận diện liên tục không ngắt quãng
-            recognition.interimResults = true; // Nhận diện cả kết quả tạm thời để phản hồi nhanh hơn
+            recognition.lang = 'en-US'; // Chuyển sang Tiếng Anh
+            recognition.continuous = true;
+            recognition.interimResults = true; // Nhận diện siêu tốc khi đang nói
 
             recognition.onstart = () => {
-                micStatus.innerText = "Đang lắng nghe... Hãy nói 'Trái', 'Phải' hoặc 'Xoay'";
+                micStatus.innerText = "🎙️ Listening... Speak clearly!";
                 micStatus.style.color = "#00ff00";
             };
 
             recognition.onerror = (event) => {
-                console.error("Lỗi Micro: ", event.error);
-                if(event.error === 'not-allowed') {
-                    micStatus.innerText = "Lỗi: Hãy cấp quyền mở Micro cho trang web!";
+                console.error(event.error);
+                if (event.error === 'not-allowed') {
+                    micStatus.innerText = "❌ Mic Blocked! Allow mic in browser settings.";
                     micStatus.style.color = "red";
                 }
             };
 
             recognition.onend = () => {
-                // Tự động bật lại mic nếu bị ngắt kết nối giữa chừng
-                recognition.start();
+                try { recognition.start(); } catch(e) {} // Giữ mic luôn bật
             };
 
             recognition.onresult = (event) => {
-                let finalTranscript = '';
-                
-                // Lấy từ khóa mới nhất được nói ra
                 for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    if (event.results[i].isFinal) {
-                        finalTranscript += event.results[i][0].transcript;
-                    } else {
-                        // Thử lấy kết quả tạm thời để xử lý nhanh hơn (tùy chọn)
-                        let text = event.results[i][0].transcript.toLowerCase().trim();
-                        handleVoiceCommand(text);
+                    let text = event.results[i][0].transcript.toLowerCase().trim();
+                    commandDisplay.innerText = text;
+
+                    // Xử lý khẩu lệnh tiếng Anh (Dùng includes đề phòng AI nghe kèm từ thừa)
+                    if (text.includes('left')) {
+                        playerMove(-1);
+                        clearTextDelay();
+                    } 
+                    else if (text.includes('right')) {
+                        playerMove(1);
+                        clearTextDelay();
+                    } 
+                    else if (text.includes('rotate') || text.includes('turn')) {
+                        playerRotate(1);
+                        clearTextDelay();
+                    } 
+                    else if (text.includes('down') || text.includes('drop')) {
+                        playerDrop();
+                        clearTextDelay();
                     }
                 }
-
-                if (finalTranscript !== '') {
-                    handleVoiceCommand(finalTranscript.toLowerCase().trim());
-                }
             };
-
-            // Hàm xử lý khẩu lệnh và ánh xạ vào game
-            function handleVoiceCommand(text) {
-                // Hiển thị những gì AI nghe được lên màn hình để tiện debug
-                commandDisplay.innerText = text;
-
-                // Sử dụng "includes" để nhận diện chính chính xác hơn ngay cả khi có từ thừa (ví dụ: "qua trái", "xoay gạch")
-                if (text.includes('trái') || text.includes('dái') || text.includes('tái')) {
-                    playerMove(-1);
-                    clearTextDelay();
-                } 
-                else if (text.includes('phải') || text.includes('bải') || text.includes('hải')) {
-                    playerMove(1);
-                    clearTextDelay();
-                } 
-                else if (text.includes('xoay') || text.includes('xoai') || text.includes('soay')) {
-                    playerRotate(1);
-                    clearTextDelay();
-                }
-                else if (text.includes('xuống') || text.includes('xuông')) {
-                    playerDrop();
-                    clearTextDelay();
-                }
-            }
 
             let clearTimer;
             function clearTextDelay() {
                 clearTimeout(clearTimer);
                 clearTimer = setTimeout(() => {
-                    commandDisplay.innerText = "Chờ lệnh...";
-                }, 800);
+                    commandDisplay.innerText = "...";
+                }, 600);
             }
 
-            // Kích hoạt Micro ngay khi tải trang
-            // Lưu ý: Chrome yêu cầu người dùng phải tương tác tương tác (click) vào trang web trước khi mở mic.
+            // Kích hoạt khi click vào màn hình (Bắt buộc theo luật bảo mật của Chrome)
             window.addEventListener('click', () => {
-                try {
-                    recognition.start();
-                } catch(e) {
-                    // Tránh lỗi nếu đã start rồi
-                }
+                try { recognition.start(); } catch(e) {}
             });
         }
     </script>
