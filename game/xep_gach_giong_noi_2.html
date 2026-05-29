@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tetris AI - Voice Control Edition</title>
+    <title>Voice Tetris AI - Model 2bC3PF3dW</title>
     <style>
         body {
-            background: #1a1a2e;
+            background: #111424;
             color: #fff;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -17,137 +17,166 @@
             margin: 0;
             overflow: hidden;
         }
-        #game-container {
-            position: relative;
-            border: 4px solid #0f3460;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
-        }
-        canvas {
-            background-color: #000;
-            display: block;
-        }
-        .ui-panel {
+        .header {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 1.8em;
+            letter-spacing: 4px;
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
         }
         #score {
-            font-size: 2em;
-            color: #e94560;
-            text-shadow: 2px 2px #000;
-        }
-        .status-box {
-            background: #16213e;
-            padding: 10px 20px;
-            border-radius: 10px;
-            margin-top: 15px;
-            font-size: 0.9em;
-            width: 300px;
-            border: 1px solid #0f3460;
-        }
-        #command-active {
             font-size: 1.5em;
-            color: #00d2ff;
+            color: #ff3366;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        #game-area {
+            position: relative;
+            border: 4px solid #1f2340;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+            border-radius: 4px;
+        }
+        canvas {
+            background-color: #080914;
+            display: block;
+        }
+        .panel {
+            background: #1a1d36;
+            padding: 12px 25px;
+            border-radius: 8px;
+            margin-top: 15px;
+            width: 300px;
+            border: 1px solid #2b315c;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        #status-lbl {
+            font-weight: bold;
+            color: #ffcc00;
+        }
+        #action-lbl {
+            font-size: 1.4em;
+            color: #00ffcc;
             font-weight: bold;
             display: block;
             margin-top: 5px;
-            height: 1.6em;
-        }
-        #mic-indicator {
-            color: yellow;
-            font-weight: bold;
+            height: 1.5em;
+            text-shadow: 0 0 5px rgba(0, 255, 204, 0.4);
         }
         .hint {
-            font-size: 0.8em;
-            color: #888;
+            font-size: 0.75em;
+            color: #6c729c;
             margin-top: 5px;
         }
     </style>
 </head>
 <body>
 
-    <div class="ui-panel">
-        <div style="font-size: 1.5em; letter-spacing: 5px;">VOICE TETRIS AI</div>
-        <div id="score">Score: 0</div>
+    <div class="header">
+        <h1>VOICE TETRIS AI</h1>
+        <div id="score">SCORE: 0</div>
     </div>
 
-    <div id="game-container">
+    <div id="game-area">
         <canvas id="tetris" width="240" height="400"></canvas>
     </div>
 
-    <div class="status-box">
-        <div>AI Status: <span id="mic-indicator">WAITING FOR CLICK...</span></div>
-        <div>Last Command: <span id="command-active">-</span></div>
-        <div class="hint">Commands: [Left] [Right] [Down] [Rotate]</div>
+    <div class="panel">
+        <div>AI Status: <span id="status-lbl">👉 CLICK ANYWHERE TO START 👈</span></div>
+        <div>Action: <span id="action-lbl">-</span></div>
+        <div class="hint">Trained commands: left | right | down | rotate</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/@teachablemachine/audio@0.4/dist/teachablemachine-audio.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
 
     <script>
-        // --- 1. CẤU HÌNH AI TỪ LINK CỦA BẠN ---
-        const URL = "https://teachablemachine.withgoogle.com/models/2bC3PF3dW/";
+        // --- 1. CẤU HÌNH AI VỚI LINK MODEL CỦA BẠN ---
+        const MODEL_URL = "https://teachablemachine.withgoogle.com/models/2bC3PF3dW/";
         let recognizer;
 
-        async function initAI() {
-            const checkpointURL = URL + "model.json";
-            const metadataURL = URL + "metadata.json";
+        async function initVoiceAI() {
+            const statusLabel = document.getElementById('status-lbl');
+            statusLabel.innerText = "⏳ LOADING MODEL...";
+            statusLabel.style.color = "#00d2ff";
 
-            document.getElementById('mic-indicator').innerText = "LOADING MODEL...";
-            
-            recognizer = speechCommands.create(
-                "BROWSER_FFT",
-                undefined,
-                checkpointURL,
-                metadataURL
-            );
+            try {
+                const checkpointURL = MODEL_URL + "model.json";
+                const metadataURL = MODEL_URL + "metadata.json";
 
-            await recognizer.ensureModelLoaded();
-            
-            document.getElementById('mic-indicator').innerText = "🎙️ LISTENING...";
-            document.getElementById('mic-indicator').style.color = "#00ff00";
+                // Khởi tạo bộ nhận diện âm thanh từ CDN
+                recognizer = speechCommands.create(
+                    "BROWSER_FFT",
+                    undefined,
+                    checkpointURL,
+                    metadataURL
+                );
 
-            const classLabels = recognizer.wordLabels(); 
+                // Kiểm tra và nạp model vào bộ nhớ trình duyệt
+                await recognizer.ensureModelLoaded();
+                
+                statusLabel.innerText = "🎙️ AI LISTENING";
+                statusLabel.style.color = "#00ff00";
 
-            recognizer.listen(result => {
-                let maxProb = 0;
-                let bestAction = "";
+                const classLabels = recognizer.wordLabels(); // [left, right, down, rotate, Background Noise]
 
-                for (let i = 0; i < classLabels.length; i++) {
-                    if (result.scores[i] > maxProb) {
-                        maxProb = result.scores[i];
-                        bestAction = classLabels[i];
+                // Bắt đầu lắng nghe thời gian thực
+                recognizer.listen(result => {
+                    let maxProbability = 0;
+                    let predictedCommand = "";
+
+                    // Duyệt tìm nhãn có độ tự tin cao nhất
+                    for (let i = 0; i < classLabels.length; i++) {
+                        if (result.scores[i] > maxProbability) {
+                            maxProbability = result.scores[i];
+                            predictedCommand = classLabels[i];
+                        }
                     }
-                }
 
-                // Xử lý khi AI nhận diện chính xác trên 80%
-                if (maxProb > 0.80 && bestAction !== "Background Noise") {
-                    handleCommand(bestAction);
-                }
-            }, {
-                includeSpectrogram: true,
-                probabilityThreshold: 0.75,
-                invokeCallbackOnNoiseAndUnknown: false,
-                overlapFactor: 0.5
-            });
+                    // Thực thi nếu độ chính xác > 80% và không phải tiếng ồn nền
+                    if (maxProbability > 0.80 && predictedCommand !== "Background Noise") {
+                        triggerGameAction(predictedCommand);
+                    }
+                }, {
+                    includeSpectrogram: true,
+                    probabilityThreshold: 0.75,
+                    invokeCallbackOnNoiseAndUnknown: false,
+                    overlapFactor: 0.75 // Tăng hệ số chồng lấp lên 75% để AI bắt từ nhạy bén, giảm trễ tối đa
+                });
+
+            } catch (error) {
+                statusLabel.innerText = "❌ ERROR: Mic Blocked or Link Error!";
+                statusLabel.style.color = "#ff3336";
+                console.error("AI Initialization Failed:", error);
+            }
         }
 
-        function handleCommand(cmd) {
-            const display = document.getElementById('command-active');
-            display.innerText = cmd.toUpperCase();
+        function triggerGameAction(cmd) {
+            const actionLabel = document.getElementById('action-lbl');
+            actionLabel.innerText = cmd.toUpperCase();
             
+            // Ánh xạ trực tiếp lệnh từ Model vào Logic Game Tetris
             if (cmd === 'left') playerMove(-1);
             else if (cmd === 'right') playerMove(1);
             else if (cmd === 'rotate') playerRotate(1);
             else if (cmd === 'down') playerDrop();
 
-            // Xóa chữ hiển thị sau 500ms
-            setTimeout(() => { if(display.innerText === cmd.toUpperCase()) display.innerText = "-"; }, 500);
+            // Hiệu ứng xóa chữ hiển thị sau 400 mili-giây
+            setTimeout(() => { 
+                if (actionLabel.innerText === cmd.toUpperCase()) {
+                    actionLabel.innerText = "-"; 
+                }
+            }, 400);
         }
 
-        // --- 2. LOGIC GAME TETRIS ---
+        // --- 2. LOGIC TRÒ CHƠI TETRIS ---
         const canvas = document.getElementById('tetris');
         const context = canvas.getContext('2d');
-        context.scale(20, 20);
+        context.scale(20, 20); // Tạo lưới ô vuông lớn hơn từ pixel gốc
 
         function arenaSweep() {
             let rowCount = 1;
@@ -187,7 +216,7 @@
         }
 
         function draw() {
-            context.fillStyle = '#000';
+            context.fillStyle = '#080914';
             context.fillRect(0, 0, canvas.width, canvas.height);
             drawMatrix(arena, {x: 0, y: 0});
             drawMatrix(player.matrix, player.pos);
@@ -222,4 +251,82 @@
             const pieces = 'ILJOTSZ';
             player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
             player.pos.y = 0;
-            player.pos.
+            player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
+            if (collide(arena, player)) {
+                arena.forEach(row => row.fill(0));
+                player.score = 0;
+                updateScore();
+            }
+        }
+
+        function playerDrop() {
+            player.pos.y++;
+            if (collide(arena, player)) {
+                player.pos.y--;
+                merge(arena, player);
+                playerReset();
+                arenaSweep();
+            }
+            dropCounter = 0;
+        }
+
+        function playerRotate(dir) {
+            const pos = player.pos.x;
+            let offset = 1;
+            rotate(player.matrix, dir);
+            while (collide(arena, player)) {
+                player.pos.x += offset;
+                offset = -(offset + (offset > 0 ? 1 : -1));
+                if (offset > player.matrix[0].length) {
+                    rotate(player.matrix, -dir);
+                    player.pos.x = pos;
+                    return;
+                }
+            }
+        }
+
+        function rotate(matrix, dir) {
+            for (let y = 0; y < matrix.length; ++y) {
+                for (let x = 0; x < y; ++x) {
+                    [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
+                }
+            }
+            if (dir > 0) matrix.forEach(row => row.reverse());
+            else matrix.reverse();
+        }
+
+        let dropCounter = 0;
+        let dropInterval = 2000; // Để tốc độ rơi tự động là 2 giây để người chơi có đủ thời gian đọc lệnh thoải mái.
+        let lastTime = 0;
+
+        function update(time = 0) {
+            const deltaTime = time - lastTime;
+            lastTime = time;
+            dropCounter += deltaTime;
+            if (dropCounter > dropInterval) playerDrop();
+            draw();
+            requestAnimationFrame(update);
+        }
+
+        function updateScore() {
+            document.getElementById('score').innerText = "SCORE: " + player.score;
+        }
+
+        const arena = [];
+        while (20--) arena.push(new Array(12).fill(0));
+
+        const player = { pos: {x: 0, y: 0}, matrix: null, score: 0 };
+
+        // SỰ KIỆN KÍCH HOẠT MICRO BẮT BUỘC TỪ TRÌNH DUYỆT
+        window.addEventListener('click', () => {
+            if (!recognizer) {
+                initVoiceAI();
+            }
+        });
+
+        playerReset();
+        updateScore();
+        update();
+    </script>
+</body>
+</html>
