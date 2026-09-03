@@ -248,6 +248,7 @@
     const username = 'hyminhlu';
     const repo = 'hyminhlu.github.io';
 
+    // Hàm riêng cho nút "Danh sách trò chơi" để bật/tắt hiển thị danh sách các khối (Khối 6, 7, 8, 9)
     function toggleMainGame(elementId) {
         const container = document.getElementById(elementId);
         if (window.getComputedStyle(container).display === 'flex') {
@@ -257,6 +258,7 @@
         }
     }
 
+    // Hàm gọi GitHub API để lấy file trong thư mục tương ứng khi click vào từng Khối
     async function toggleFolder(path, elementId) {
         const container = document.getElementById(elementId);
         
@@ -281,11 +283,10 @@
                     } else {
                         validFiles.forEach(file => {
                             const link = document.createElement('a');
-                            // Trỏ trực tiếp tới file trên GitHub Pages để người dùng có thể chơi/xem trực tiếp
                             link.href = file.path;
                             link.className = 'btn-file';
-                            // Mở game/file ở tab mới nếu là HTML/game web trực tuyến
-                            if (file.name.endsWith('.html')) {
+                            // Nếu là file HTML (game web trực tuyến), mở sang tab mới để người dùng chơi ngay
+                            if (file.name.toLowerCase().endsWith('.html')) {
                                 link.target = '_blank';
                             }
                             const displayName = file.name.replace(/\.[^/.]+$/, "");
@@ -294,7 +295,7 @@
                         });
                     }
                 } else {
-                    container.innerHTML = '<span class="loading">Thư mục hiện đang trống hoặc chưa tạo.</span>';
+                    container.innerHTML = '<span class="loading">Thư mục hiện đang trống hoặc chưa tạo trên GitHub.</span>';
                 }
             } catch (e) {
                 container.innerHTML = '<span class="loading">Lỗi kết nối. Vui lòng thử lại.</span>';
