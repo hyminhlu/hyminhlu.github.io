@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Tập Trắc Nghiệm Toán 8</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; display: flex; justify-content: center; }
+        .quiz-container { background: white; max-width: 700px; width: 100%; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #1a73e8; margin-bottom: 30px; }
+        .question-box { margin-bottom: 25px; padding: 15px; border-bottom: 1px solid #eee; }
+        .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .option-btn { padding: 12px; border: 2px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; transition: 0.2s; text-align: left; }
+        .option-btn:hover { border-color: #1a73e8; background: #e8f0fe; }
+        .correct { background: #d4edda !important; border-color: #28a745 !important; color: #155724; }
+        .wrong { background: #f8d7da !important; border-color: #dc3545 !important; color: #721c24; }
+        .explanation { margin-top: 15px; padding: 12px; background: #e7f3ff; border-radius: 6px; display: none; font-style: italic; color: #0c5460; border-left: 4px solid #1a73e8; }
+        #next-btn { display: block; width: 100%; padding: 15px; background: #1a73e8; color: white; border: none; border-radius: 8px; font-size: 1em; cursor: pointer; margin-top: 20px; }
+        #next-btn:hover { background: #1557b0; }
+        #result { display: none; text-align: center; font-size: 1.5em; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>ÔN TẬP ĐƠN THỨC & ĐA THỨC</h1>
+        <div id="quiz-content">
+            <p id="progress">Câu hỏi 1/12</p>
+            <div class="question-box">
+                <p class="question-text" id="q-text"></p>
+                <div class="options" id="opt-container"></div>
+                <div class="explanation" id="exp-box"></div>
+            </div>
+            <button id="next-btn" onclick="handleNext()" style="display:none;">Câu tiếp theo</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const quizData = [{"id": 1, "question": "Biểu thức nào trong các câu sau là đơn thức?", "options": ["3x + y", "2x²y", "x/y", "x - 2"], "correct": 1, "explanation": "Đơn thức là biểu thức đại số chỉ gồm một số, hoặc một biến, hoặc một tích giữa các số và các biến[cite: 2]."}, {"id": 2, "question": "Biểu thức nào trong các câu sau là đa thức?", "options": ["x² - 4x + 3", "√(x)", "3/x", "2^x"], "correct": 0, "explanation": "Đa thức là một tổng của những đơn thức[cite: 2]."}, {"id": 3, "question": "Biểu thức nào trong các câu sau KHÔNG là đơn thức?", "options": ["-5", "x²y", "3x + y", "xyz"], "correct": 2, "explanation": "3x + y là đa thức vì nó là tổng của hai đơn thức[cite: 2]."}, {"id": 4, "question": "Biểu thức nào trong các câu sau KHÔNG là đa thức?", "options": ["x - y", "x² + 1", "2/(x-1)", "0"], "correct": 2, "explanation": "Biểu thức chứa biến ở mẫu số không được coi là đa thức[cite: 2]."}, {"id": 5, "question": "Đơn thức nào trong các câu sau là đơn thức thu gọn?", "options": ["2x.x.y", "3xy.z", "-5x²y³", "x².y.x"], "correct": 2, "explanation": "Đơn thức thu gọn là đơn thức mà mỗi biến chỉ được viết một lần dưới dạng lũy thừa[cite: 2]."}, {"id": 6, "question": "Đơn thức -3x²y có hệ số là:", "options": ["3", "-3", "2", "1"], "correct": 1, "explanation": "Hệ số là phần số thực đứng trước phần biến của đơn thức[cite: 2]."}, {"id": 7, "question": "Đơn thức 5xyz² có phần biến là:", "options": ["5", "xyz", "xyz²", "z²"], "correct": 2, "explanation": "Phần biến bao gồm tất cả các biến kèm theo số mũ của chúng trong đơn thức[cite: 2]."}, {"id": 8, "question": "Đơn thức 2x³y² có bậc là:", "options": ["3", "2", "5", "6"], "correct": 2, "explanation": "Bậc của đơn thức là tổng số mũ của tất cả các biến (3 + 2 = 5)[cite: 2]."}, {"id": 9, "question": "Đơn thức thu gọn của (2x²y).(3xy) là:", "options": ["5x³y²", "6x³y²", "6x²y", "5x²y²"], "correct": 1, "explanation": "Nhân hệ số với hệ số (2*3=6) và cộng số mũ các biến cùng loại (x²*x=x³; y*y=y²)[cite: 2]."}, {"id": 10, "question": "Biểu thức nào trong các câu sau là đơn thức?", "options": ["(x+y)/2", "xy²z", "x - y²", "1/x"], "correct": 1, "explanation": "xy²z là tích giữa các biến nên là đơn thức[cite: 2]."}, {"id": 11, "question": "Đơn thức đồng dạng với đơn thức 2x²y là:", "options": ["2xy²", "-x²y", "2x²", "x²y²"], "correct": 1, "explanation": "Hai đơn thức đồng dạng có cùng phần biến (x²y)[cite: 2]."}, {"id": 12, "question": "Đơn thức đồng dạng với đơn thức -5xy²z là:", "options": ["5xyz²", "xy²z", "5xy²", "-5x²yz"], "correct": 1, "explanation": "Đơn thức đồng dạng phải có chính xác phần biến là xy²z[cite: 2]."}];
+        let currentIdx = 0;
+        let score = 0;
+        let isAnswered = false;
+
+        function loadQuestion() {
+            isAnswered = false;
+            const q = quizData[currentIdx];
+            document.getElementById('progress').innerText = `Câu hỏi ${currentIdx + 1}/${quizData.length}`;
+            document.getElementById('q-text').innerText = q.question;
+            document.getElementById('exp-box').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+            
+            const container = document.getElementById('opt-container');
+            container.innerHTML = '';
+            
+            const labels = ['A', 'B', 'C', 'D'];
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<strong>${labels[i]}.</strong> ${opt}`;
+                btn.onclick = () => checkAnswer(i, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIdx, btn) {
+            if (isAnswered) return;
+            isAnswered = true;
+            
+            const q = quizData[currentIdx];
+            const allBtns = document.querySelectorAll('.option-btn');
+            
+            if (selectedIdx === q.correct) {
+                btn.classList.add('correct');
+                score++;
+            } else {
+                btn.classList.add('wrong');
+                allBtns[q.correct].classList.add('correct');
+            }
+            
+            const exp = document.getElementById('exp-box');
+            exp.innerHTML = `<strong>Giải thích:</strong> ${q.explanation}`;
+            exp.style.display = 'block';
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function handleNext() {
+            currentIdx++;
+            if (currentIdx < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-content').style.display = 'none';
+            const res = document.getElementById('result');
+            res.style.display = 'block';
+            res.innerHTML = `Hoàn thành!<br>Điểm của bạn: ${score}/${quizData.length}<br><br><button onclick="location.reload()" style="padding:10px 20px;">Làm lại</button>`;
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

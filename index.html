@@ -17,7 +17,7 @@
 
         header {
             background-color: #ffffff;
-            padding: 20px 15px; /* Giảm padding trên mobile */
+            padding: 20px 15px;
             text-align: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
@@ -25,22 +25,20 @@
         h1 { 
             margin: 0; 
             color: #007bff; 
-            font-size: 24px; /* Giảm nhẹ cỡ chữ tiêu đề */
+            font-size: 24px;
         }
         p.subtitle { margin: 5px 0 0; color: #65676b; font-size: 14px; }
 
         .container {
             flex: 1;
             max-width: 1000px;
-            margin: 20px auto; /* Giảm margin trên mobile */
+            margin: 20px auto;
             padding: 0 15px;
             display: grid;
-            /* Tự động chuyển đổi giữa 1 cột và 2 cột */
             grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
             gap: 20px;
         }
 
-        /* Khi màn hình lớn hơn 768px (Laptop/Tablet ngang) thì hiện 2 cột */
         @media (min-width: 768px) {
             h1 { font-size: 32px; }
             .container { 
@@ -78,7 +76,7 @@
             width: 100%;
             background-color: #f8f9fa;
             border: 1px solid #e4e6eb;
-            padding: 14px 15px; /* Tăng vùng chạm cho ngón tay */
+            padding: 14px 15px;
             text-align: left;
             border-radius: 10px;
             cursor: pointer;
@@ -87,11 +85,19 @@
             justify-content: space-between;
             align-items: center;
             transition: background 0.2s;
-            -webkit-tap-highlight-color: transparent; /* Xóa vệt xanh khi chạm trên mobile */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .grade-header:hover {
             background-color: #e4e6eb;
+        }
+
+        .sub-grade-header {
+            background-color: #f1f3f5;
+            font-weight: normal;
+            font-size: 14px;
+            padding: 12px 15px;
+            margin-top: 6px;
         }
 
         .file-list {
@@ -99,6 +105,10 @@
             padding: 10px 5px 10px 15px;
             flex-direction: column;
             gap: 8px;
+        }
+
+        .sub-file-list {
+            padding-left: 20px;
         }
 
         .btn-file {
@@ -111,7 +121,7 @@
             border: 1px solid #eee;
             font-size: 14px;
             transition: all 0.2s;
-            word-break: break-word; /* Tránh tràn chữ dài trên mobile */
+            word-break: break-word;
         }
 
         .btn-file:hover {
@@ -140,6 +150,7 @@
 </header>
 
 <div class="container">
+    <!-- Kho Bài Giảng -->
     <div class="section-card">
         <div class="icon-title">
             <span class="icon">📚</span>
@@ -179,17 +190,52 @@
         </div>
     </div>
 
+    <!-- Trò Chơi Trí Tuệ -->
     <div class="section-card">
         <div class="icon-title">
             <span class="icon">🎮</span>
             <h2>Trò Chơi Trí Tuệ</h2>
         </div>
+        
         <div class="grade-item">
-            <div class="grade-header" onclick="toggleFolder('game', 'list-game')">
+            <div class="grade-header" onclick="toggleMainGame('game-container')">
                 <span>🕹️ Danh sách trò chơi</span>
                 <small>▼</small>
             </div>
-            <div id="list-game" class="file-list"><span class="loading">Đang tải...</span></div>
+            <div id="game-container" class="file-list">
+                <!-- Khối 6 Game -->
+                <div class="grade-item">
+                    <div class="grade-header sub-grade-header" onclick="toggleFolder('game/khoi6', 'list-game-6')">
+                        <span>📍 Khối 6</span>
+                        <small>▼</small>
+                    </div>
+                    <div id="list-game-6" class="file-list sub-file-list"><span class="loading">Đang tải...</span></div>
+                </div>
+                <!-- Khối 7 Game -->
+                <div class="grade-item">
+                    <div class="grade-header sub-grade-header" onclick="toggleFolder('game/khoi7', 'list-game-7')">
+                        <span>📍 Khối 7</span>
+                        <small>▼</small>
+                    </div>
+                    <div id="list-game-7" class="file-list sub-file-list"><span class="loading">Đang tải...</span></div>
+                </div>
+                <!-- Khối 8 Game -->
+                <div class="grade-item">
+                    <div class="grade-header sub-grade-header" onclick="toggleFolder('game/khoi8', 'list-game-8')">
+                        <span>📍 Khối 8</span>
+                        <small>▼</small>
+                    </div>
+                    <div id="list-game-8" class="file-list sub-file-list"><span class="loading">Đang tải...</span></div>
+                </div>
+                <!-- Khối 9 Game -->
+                <div class="grade-item">
+                    <div class="grade-header sub-grade-header" onclick="toggleFolder('game/khoi9', 'list-game-9')">
+                        <span>📍 Khối 9</span>
+                        <small>▼</small>
+                    </div>
+                    <div id="list-game-9" class="file-list sub-file-list"><span class="loading">Đang tải...</span></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -202,10 +248,18 @@
     const username = 'hyminhlu';
     const repo = 'hyminhlu.github.io';
 
+    function toggleMainGame(elementId) {
+        const container = document.getElementById(elementId);
+        if (window.getComputedStyle(container).display === 'flex') {
+            container.style.display = 'none';
+        } else {
+            container.style.display = 'flex';
+        }
+    }
+
     async function toggleFolder(path, elementId) {
         const container = document.getElementById(elementId);
         
-        // Đóng mở linh hoạt bằng CSS display
         if (window.getComputedStyle(container).display === 'flex') {
             container.style.display = 'none';
             return;
@@ -227,14 +281,20 @@
                     } else {
                         validFiles.forEach(file => {
                             const link = document.createElement('a');
+                            // Trỏ trực tiếp tới file trên GitHub Pages để người dùng có thể chơi/xem trực tiếp
                             link.href = file.path;
                             link.className = 'btn-file';
-                            // Hiển thị tên file sạch sẽ (bỏ đuôi)
-                            const displayName = file.name.split('.').slice(0, -1).join('.');
-                            link.innerText = "📄 " + displayName;
+                            // Mở game/file ở tab mới nếu là HTML/game web trực tuyến
+                            if (file.name.endsWith('.html')) {
+                                link.target = '_blank';
+                            }
+                            const displayName = file.name.replace(/\.[^/.]+$/, "");
+                            link.innerText = "🎮 " + displayName;
                             container.appendChild(link);
                         });
                     }
+                } else {
+                    container.innerHTML = '<span class="loading">Thư mục hiện đang trống hoặc chưa tạo.</span>';
                 }
             } catch (e) {
                 container.innerHTML = '<span class="loading">Lỗi kết nối. Vui lòng thử lại.</span>';
