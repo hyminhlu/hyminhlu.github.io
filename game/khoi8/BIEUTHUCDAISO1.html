@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -7,19 +6,29 @@
     <title>Ôn Tập Trắc Nghiệm Toán 8</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; display: flex; justify-content: center; }
-        .quiz-container { background: white; max-width: 700px; width: 100%; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #1a73e8; margin-bottom: 30px; }
+        .quiz-container { background: white; max-width: 750px; width: 100%; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #1a73e8; margin-bottom: 25px; font-size: 1.6em; }
         .question-box { margin-bottom: 25px; padding: 15px; border-bottom: 1px solid #eee; }
-        .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
-        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .option-btn { padding: 12px; border: 2px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; transition: 0.2s; text-align: left; }
+        #progress { font-size: 1.1em; font-weight: bold; color: #555; margin-bottom: 10px; }
+        .question-text { font-size: 1.25em; font-weight: bold; margin-bottom: 20px; line-height: 1.4; color: #202124; }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .option-btn { padding: 14px 16px; border: 2px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; transition: 0.2s; text-align: left; font-size: 1.1em; color: #3c4043; }
         .option-btn:hover { border-color: #1a73e8; background: #e8f0fe; }
-        .correct { background: #d4edda !important; border-color: #28a745 !important; color: #155724; }
+        .correct { background: #d4edda !important; border-color: #28a745 !important; color: #155724; font-weight: bold; }
         .wrong { background: #f8d7da !important; border-color: #dc3545 !important; color: #721c24; }
-        .explanation { margin-top: 15px; padding: 12px; background: #e7f3ff; border-radius: 6px; display: none; font-style: italic; color: #0c5460; border-left: 4px solid #1a73e8; }
-        #next-btn { display: block; width: 100%; padding: 15px; background: #1a73e8; color: white; border: none; border-radius: 8px; font-size: 1em; cursor: pointer; margin-top: 20px; }
+        .explanation { margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 8px; display: none; font-size: 1.05em; color: #0c5460; border-left: 5px solid #1a73e8; line-height: 1.5; }
+        #next-btn { display: block; width: 100%; padding: 15px; background: #1a73e8; color: white; border: none; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin-top: 20px; }
         #next-btn:hover { background: #1557b0; }
-        #result { display: none; text-align: center; font-size: 1.5em; font-weight: bold; }
+        #result { display: none; text-align: center; font-size: 1.5em; font-weight: bold; color: #202124; }
+
+        /* Tối ưu hiển thị cho màn hình nhỏ / điện thoại */
+        @media (max-width: 600px) {
+            .options { grid-template-columns: 1fr; }
+            .quiz-container { padding: 20px 15px; }
+            h1 { font-size: 1.3em; }
+            .question-text { font-size: 1.1em; }
+            .option-btn { font-size: 1em; padding: 12px; }
+        }
     </style>
 </head>
 <body>
@@ -38,7 +47,21 @@
     </div>
 
     <script>
-        const quizData = [{"id": 1, "question": "Biểu thức nào trong các câu sau là đơn thức?", "options": ["3x + y", "2x²y", "x/y", "x - 2"], "correct": 1, "explanation": "Đơn thức là biểu thức đại số chỉ gồm một số, hoặc một biến, hoặc một tích giữa các số và các biến[cite: 2]."}, {"id": 2, "question": "Biểu thức nào trong các câu sau là đa thức?", "options": ["x² - 4x + 3", "√(x)", "3/x", "2^x"], "correct": 0, "explanation": "Đa thức là một tổng của những đơn thức[cite: 2]."}, {"id": 3, "question": "Biểu thức nào trong các câu sau KHÔNG là đơn thức?", "options": ["-5", "x²y", "3x + y", "xyz"], "correct": 2, "explanation": "3x + y là đa thức vì nó là tổng của hai đơn thức[cite: 2]."}, {"id": 4, "question": "Biểu thức nào trong các câu sau KHÔNG là đa thức?", "options": ["x - y", "x² + 1", "2/(x-1)", "0"], "correct": 2, "explanation": "Biểu thức chứa biến ở mẫu số không được coi là đa thức[cite: 2]."}, {"id": 5, "question": "Đơn thức nào trong các câu sau là đơn thức thu gọn?", "options": ["2x.x.y", "3xy.z", "-5x²y³", "x².y.x"], "correct": 2, "explanation": "Đơn thức thu gọn là đơn thức mà mỗi biến chỉ được viết một lần dưới dạng lũy thừa[cite: 2]."}, {"id": 6, "question": "Đơn thức -3x²y có hệ số là:", "options": ["3", "-3", "2", "1"], "correct": 1, "explanation": "Hệ số là phần số thực đứng trước phần biến của đơn thức[cite: 2]."}, {"id": 7, "question": "Đơn thức 5xyz² có phần biến là:", "options": ["5", "xyz", "xyz²", "z²"], "correct": 2, "explanation": "Phần biến bao gồm tất cả các biến kèm theo số mũ của chúng trong đơn thức[cite: 2]."}, {"id": 8, "question": "Đơn thức 2x³y² có bậc là:", "options": ["3", "2", "5", "6"], "correct": 2, "explanation": "Bậc của đơn thức là tổng số mũ của tất cả các biến (3 + 2 = 5)[cite: 2]."}, {"id": 9, "question": "Đơn thức thu gọn của (2x²y).(3xy) là:", "options": ["5x³y²", "6x³y²", "6x²y", "5x²y²"], "correct": 1, "explanation": "Nhân hệ số với hệ số (2*3=6) và cộng số mũ các biến cùng loại (x²*x=x³; y*y=y²)[cite: 2]."}, {"id": 10, "question": "Biểu thức nào trong các câu sau là đơn thức?", "options": ["(x+y)/2", "xy²z", "x - y²", "1/x"], "correct": 1, "explanation": "xy²z là tích giữa các biến nên là đơn thức[cite: 2]."}, {"id": 11, "question": "Đơn thức đồng dạng với đơn thức 2x²y là:", "options": ["2xy²", "-x²y", "2x²", "x²y²"], "correct": 1, "explanation": "Hai đơn thức đồng dạng có cùng phần biến (x²y)[cite: 2]."}, {"id": 12, "question": "Đơn thức đồng dạng với đơn thức -5xy²z là:", "options": ["5xyz²", "xy²z", "5xy²", "-5x²yz"], "correct": 1, "explanation": "Đơn thức đồng dạng phải có chính xác phần biến là xy²z[cite: 2]."}];
+        const quizData = [
+            {"id": 1, "question": "Biểu thức nào trong các câu sau là đơn thức?", "options": ["3x + y", "2x²y", "x/y", "x - 2"], "correct": 1, "explanation": "Đơn thức là biểu thức đại số chỉ gồm một số, hoặc một biến, hoặc một tích giữa các số và các biến[cite: 4]."},
+            {"id": 2, "question": "Biểu thức nào trong các câu sau là đa thức?", "options": ["x² - 4x + 3", "√(x)", "3/x", "2^x"], "correct": 0, "explanation": "Đa thức là một tổng của những đơn thức[cite: 4]."},
+            {"id": 3, "question": "Biểu thức nào trong các câu sau KHÔNG là đơn thức?", "options": ["-5", "x²y", "3x + y", "xyz"], "correct": 2, "explanation": "3x + y là đa thức vì nó là tổng của hai đơn thức[cite: 4]."},
+            {"id": 4, "question": "Biểu thức nào trong các câu sau KHÔNG là đa thức?", "options": ["x - y", "x² + 1", "2/(x-1)", "0"], "correct": 2, "explanation": "Biểu thức chứa biến ở mẫu số không được coi là đa thức[cite: 4]."},
+            {"id": 5, "question": "Đơn thức nào trong các câu sau là đơn thức thu gọn?", "options": ["2x.x.y", "3xy.z.x", "-5x²y³", "x².y.x"], "correct": 2, "explanation": "Đơn thức thu gọn là đơn thức mà mỗi biến chỉ được viết một lần dưới dạng lũy thừa[cite: 4]."},
+            {"id": 6, "question": "Đơn thức -3x²y có hệ số là:", "options": ["3", "-3", "2", "1"], "correct": 1, "explanation": "Hệ số là phần số thực đứng trước phần biến của đơn thức[cite: 4]."},
+            {"id": 7, "question": "Đơn thức 5xyz² có phần biến là:", "options": ["5", "xyz", "xyz²", "z²"], "correct": 2, "explanation": "Phần biến bao gồm tất cả các biến kèm theo số mũ của chúng trong đơn thức[cite: 4]."},
+            {"id": 8, "question": "Đơn thức 2x³y² có bậc là:", "options": ["3", "2", "5", "6"], "correct": 2, "explanation": "Bậc của đơn thức là tổng số mũ của tất cả các biến (3 + 2 = 5)[cite: 4]."},
+            {"id": 9, "question": "Đơn thức thu gọn của (2x²y).(3xy) là:", "options": ["5x³y²", "6x³y²", "6x²y", "5x²y²"], "correct": 1, "explanation": "Nhân hệ số với hệ số (2*3=6) và cộng số mũ các biến cùng loại (x²*x=x³; y*y=y²)[cite: 4]."},
+            {"id": 10, "question": "Biểu thức nào trong các câu sau là đơn thức?", "options": ["(x+y)/2", "xy²z", "x - y²", "1/x"], "correct": 1, "explanation": "xy²z là tích giữa các biến nên là đơn thức[cite: 4]."},
+            {"id": 11, "question": "Đơn thức đồng dạng với đơn thức 2x²y là:", "options": ["2xy²", "-x²y", "2x²", "x²y²"], "correct": 1, "explanation": "Hai đơn thức đồng dạng có cùng phần biến (x²y)[cite: 4]."},
+            {"id": 12, "question": "Đơn thức đồng dạng với đơn thức -5xy²z là:", "options": ["5xyz²", "xy²z", "5xy²", "-5x²yz"], "correct": 1, "explanation": "Đơn thức đồng dạng phải có chính xác phần biến là xy²z[cite: 4]."}
+        ];
+
         let currentIdx = 0;
         let score = 0;
         let isAnswered = false;
@@ -98,7 +121,7 @@
             document.getElementById('quiz-content').style.display = 'none';
             const res = document.getElementById('result');
             res.style.display = 'block';
-            res.innerHTML = `Hoàn thành!<br>Điểm của bạn: ${score}/${quizData.length}<br><br><button onclick="location.reload()" style="padding:10px 20px;">Làm lại</button>`;
+            res.innerHTML = `Hoàn thành!<br>Điểm của bạn: ${score}/${quizData.length}<br><br><button onclick="location.reload()" style="padding:12px 24px; font-size: 0.8em; cursor:pointer; background:#1a73e8; color:white; border:none; border-radius:6px;">Làm lại</button>`;
         }
 
         loadQuestion();
