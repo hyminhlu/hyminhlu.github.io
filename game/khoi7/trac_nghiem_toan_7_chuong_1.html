@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc nghiệm Toán 7 - Chương 1: Tập hợp các số hữu tỉ</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- KaTeX for beautiful math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMath()"></script>
+    
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 750px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Style */
+        .app-header {
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        .app-header h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .app-header p {
+            margin: 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        /* Quiz Body */
+        .quiz-body {
+            padding: 30px;
+        }
+
+        .quiz-info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .question-counter {
+            background: #e0e7ff;
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .score-display {
+            color: var(--success);
+        }
+
+        /* Question Card */
+        .question-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option-btn {
+            background: #f9fafb;
+            border: 2px solid var(--border-color);
+            padding: 15px 20px;
+            border-radius: 12px;
+            text-align: left;
+            font-size: 1rem;
+            font-family: inherit;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #f0fdf4;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+        }
+
+        .option-badge {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            transition: all 0.25s ease;
+        }
+
+        .option-btn.correct {
+            background: #ecfdf5 !important;
+            border-color: var(--success) !important;
+            color: #065f46;
+        }
+        .option-btn.correct .option-badge {
+            background: var(--success);
+            color: white;
+        }
+
+        .option-btn.incorrect {
+            background: #fef2f2 !important;
+            border-color: var(--danger) !important;
+            color: #991b1b;
+        }
+        .option-btn.incorrect .option-badge {
+            background: var(--danger);
+            color: white;
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        /* Explanation Box */
+        .explanation-box {
+            background: #f8fafc;
+            border-left: 5px solid var(--primary);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Navigation Controls */
+        .nav-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            border-top: 2px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-prev {
+            background: #f3f4f6;
+            color: var(--text-main);
+        }
+        .btn-prev:hover:not(:disabled) {
+            background: #e5e7eb;
+        }
+        .btn-prev:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        .btn-next:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Question Navigation Bar / Grid */
+        .jump-grid {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .jump-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .jump-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .jump-btn.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .jump-btn.answered-correct {
+            background: #d1fae5;
+            border-color: var(--success);
+            color: #065f46;
+        }
+
+        .jump-btn.answered-incorrect {
+            background: #fee2e2;
+            border-color: var(--danger);
+            color: #991b1b;
+        }
+
+        /* Result View */
+        .result-container {
+            text-align: center;
+            padding: 20px 10px;
+            display: none;
+        }
+
+        .result-container h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 25px auto;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .result-msg {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="app-header">
+        <h1>Trắc nghiệm Toán 7</h1>
+        <p>Chương I: Tập hợp các số hữu tỉ (Kết nối tri thức với cuộc sống)</p>
+    </div>
+
+    <div class="quiz-body">
+        <div id="quizMainContent">
+            <div class="quiz-info-bar">
+                <span class="question-counter" id="questionCounter">Câu 1 / 12</span>
+                <span class="score-display">Đúng: <span id="correctScore">0</span>/12</span>
+            </div>
+
+            <div class="question-title" id="questionTitle">Đang tải câu hỏi...</div>
+
+            <div class="options-container" id="optionsContainer"></div>
+
+            <div class="explanation-box" id="explanationBox">
+                <div class="explanation-title">💡 Lời giải chi tiết:</div>
+                <div id="explanationText"></div>
+            </div>
+
+            <div class="nav-footer">
+                <button class="btn btn-prev" id="prevBtn" onclick="changeQuestion(-1)">← Câu trước</button>
+                <button class="btn btn-next" id="nextBtn" onclick="changeQuestion(1)">Câu tiếp theo →</button>
+            </div>
+
+            <div class="jump-grid" id="jumpGrid"></div>
+        </div>
+
+        <div class="result-container" id="resultContainer">
+            <h2>🎉 Hoàn thành bài trắc nghiệm!</h2>
+            <div class="score-circle" id="finalScoreCircle">0/12</div>
+            <div class="result-msg" id="resultMsg">Bạn đã hoàn thành xuất sắc các câu hỏi ôn tập chương 1!</div>
+            <button class="btn btn-next" onclick="restartQuiz()" style="width: 100%;">Làm lại từ đầu</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            question: "Câu 1: Số nào sau đây là số hữu tỉ?",
+            options: [
+                "A. -5",
+                "B. $\\frac{3}{0}$",
+                "C. Một số vô tỉ",
+                "D. Không có số nào"
+            ],
+            correct: 0,
+            explanation: "Số hữu tỉ là số viết được dưới dạng phân số $\\frac{a}{b}$ với $a, b \\in \\mathbb{Z}, b \\neq 0$. Số $-5$ có thể viết thành $\\frac{-5}{1}$, do đó $-5$ là số hữu tỉ. Phân số $\\frac{3}{0}$ có mẫu bằng 0 nên không thỏa mãn."
+        },
+        {
+            question: "Câu 2: Ký hiệu của tập hợp các số hữu tỉ là gì?",
+            options: [
+                "A. $\\mathbb{N}$",
+                "B. $\\mathbb{Z}$",
+                "C. $\\mathbb{Q}$",
+                "D. $\\mathbb{R}$"
+            ],
+            correct: 2,
+            explanation: "Theo sách giáo khoa Toán 7, tập hợp các số hữu tỉ được kí hiệu là $\\mathbb{Q}$. ($\\mathbb{N}$ là tập số tự nhiên, $\\mathbb{Z}$ là tập số nguyên, $\\mathbb{R}$ là tập số thực)."
+        },
+        {
+            question: "Câu 3: Số đối của số hữu tỉ $-\\frac{3}{4}$ là:",
+            options: [
+                "A. $-\\frac{4}{3}$",
+                "B. $\\frac{3}{4}$",
+                "C. $\\frac{4}{3}$",
+                "D. $-\\frac{-3}{4}$"
+            ],
+            correct: 1,
+            explanation: "Mỗi số hữu tỉ đều có một số đối. Số đối của số hữu tỉ $m$ là số $-m$. Do đó, số đối của $-\\frac{3}{4}$ là $-\\left(-\\frac{3}{4}\\right) = \\frac{3}{4}$."
+        },
+        {
+            question: "Câu 4: Kết quả của phép tính $(-2)^3 \\cdot (-2)^2$ dưới dạng lũy thừa là:",
+            options: [
+                "A. $(-2)^6$",
+                "B. $(-2)^5$",
+                "C. $(-2)^1$",
+                "D. $2^5$"
+            ],
+            correct: 1,
+            explanation: "Khi nhân hai lũy thừa cùng cơ số, ta giữ nguyên cơ số và cộng hai số mũ: $x^m \\cdot x^n = x^{m+n}$. Vậy $(-2)^3 \\cdot (-2)^2 = (-2)^{3+2} = (-2)^5$."
+        },
+        {
+            question: "Câu 5: Giá trị của biểu thức $[(-5)^3]^2$ là:",
+            options: [
+                "A. $(-5)^5$",
+                "B. $(-5)^6$",
+                "C. $5^6$",
+                "D. Cả B và C đều đúng"
+            ],
+            correct: 3,
+            explanation: "Khi tính lũy thừa của một lũy thừa, ta giữ nguyên cơ số và nhân hai số mũ: $[(x^m)]^n = x^{m \\cdot n}$. Ta có $[(-5)^3]^2 = (-5)^{3 \\cdot 2} = (-5)^6$. Vì số mũ là số chẵn (6) nên $(-5)^6 = 5^6$. Do đó cả B và C đều đúng."
+        },
+        {
+            question: "Câu 6: Cho đẳng thức $x + \\frac{1}{2} = -\\frac{3}{4}$. Giá trị của $x$ là:",
+            options: [
+                "A. $-\\frac{5}{4}$",
+                "B. $-\\frac{1}{4}$",
+                "C. $\\frac{5}{4}$",
+                "D. $\\frac{1}{4}$"
+            ],
+            correct: 0,
+            explanation: "Áp dụng quy tắc chuyển vế: $x = -\\frac{3}{4} - \\frac{1}{2} = -\\frac{3}{4} - \\frac{2}{4} = -\\frac{5}{4}$."
+        },
+        {
+            question: "Câu 7: Thứ tự thực hiện các phép tính đối với biểu thức không có dấu ngoặc trong tập hợp số hữu tỉ là:",
+            options: [
+                "A. Cộng và trừ $\\rightarrow$ Nhân và chia $\\rightarrow$ Lũy thừa",
+                "B. Lũy thừa $\\rightarrow$ Cộng và trừ $\\rightarrow$ Nhân và chia",
+                "C. Lũy thừa $\\rightarrow$ Nhân và chia $\\rightarrow$ Cộng và trừ",
+                "D. Nhân và chia $\\rightarrow$ Lũy thừa $\\rightarrow$ Cộng và trừ"
+            ],
+            correct: 2,
+            explanation: "Theo quy tắc thứ tự thực hiện phép tính: Với các biểu thức không có dấu ngoặc, ta thực hiện theo thứ tự: Lũy thừa $\\rightarrow$ Nhân và chia $\\rightarrow$ Cộng và trừ."
+        },
+        {
+            question: "Câu 8: Khẳng định nào sau đây là **đúng** về số hữu tỉ âm?",
+            options: [
+                "A. Số hữu tỉ âm lớn hơn số 0.",
+                "B. Số hữu tỉ âm vừa lớn hơn 0 vừa nhỏ hơn mọi số hữu tỉ dương.",
+                "C. Số hữu tỉ âm nhỏ hơn số 0 và nhỏ hơn mọi số hữu tỉ dương.",
+                "D. Số hữu tỉ âm bằng số hữu tỉ dương."
+            ],
+            correct: 2,
+            explanation: "Theo SGK Toán 7, các số hữu tỉ nhỏ hơn 0 là số hữu tỉ âm. Số hữu tỉ âm nhỏ hơn mọi số hữu tỉ dương và nhỏ hơn số 0."
+        },
+        {
+            question: "Câu 9: Cho ba số hữu tỉ $a, b, c$. Nếu $a < b$ và $b < c$ thì ta suy ra được điều gì theo tính chất bắc cầu?",
+            options: [
+                "A. $a > c$",
+                "B. $a < c$",
+                "C. $a = c$",
+                "D. $a \\le c$"
+            ],
+            correct: 1,
+            explanation: "Theo tính chất bắc cầu trong tập hợp các số hữu tỉ: Cho ba số hữu tỉ $a, b, c$. Nếu $a < b$ và $b < c$ thì $a < c$."
+        },
+        {
+            question: "Câu 10: Kết quả của phép tính $\\left(\\frac{2}{3}\\right)^5 : \\left(\\frac{2}{3}\\right)^3$ là:",
+            options: [
+                "A. $\\left(\\frac{2}{3}\\right)^2$",
+                "B. $\\left(\\frac{2}{3}\\right)^8$",
+                "C. $\\left(\\frac{2}{3}\\right)^{15}$",
+                "D. $\\frac{2}{3}$"
+            ],
+            correct: 0,
+            explanation: "Khi chia hai lũy thừa cùng cơ số khác 0, ta giữ nguyên cơ số và lấy số mũ của lũy thừa bị chia trừ số mũ của lũy thừa chia: $x^m : x^n = x^{m-n}$. Ta có $\\left(\\frac{2}{3}\\right)^5 : \\left(\\frac{2}{3}\\right)^3 = \\left(\\frac{2}{3}\\right)^{5-3} = \\left(\\frac{2}{3}\\right)^2$."
+        },
+        {
+            question: "Câu 11: Khi chuyển một số hạng từ vế này sang vế kia của một đẳng thức, ta phải làm gì?",
+            options: [
+                "A. Giữ nguyên dấu của số hạng đó.",
+                "B. Đổi dấu số hạng đó: dấu '+' đổi thành dấu '-', dấu '-' đổi thành dấu '+'.",
+                "C. Luôn đổi thành dấu '+'.",
+                "D. Luôn đổi thành dấu '-'."
+            ],
+            correct: 1,
+            explanation: "Theo quy tắc chuyển vế: Khi chuyển một số hạng từ vế này sang vế kia của một đẳng thức, ta phải đổi dấu số hạng đó: dấu '+' đổi thành dấu '-' và dấu '-' đổi thành dấu '+'."
+        },
+        {
+            question: "Câu 12: Giá trị của biểu thức $A = 2,5 - \\left(-\\frac{6}{9}\\right)$ là:",
+            options: [
+                "A. $\\frac{11}{6}$",
+                "B. $\\frac{19}{6}$",
+                "C. $-\\frac{19}{6}$",
+                "D. $\\frac{5}{6}$"
+            ],
+            correct: 1,
+            explanation: "Ta có $-\\frac{6}{9} = -\\frac{2}{3}$. Biểu thức trở thành $A = 2,5 - \\left(-\\frac{2}{3}\\right) = \\frac{5}{2} + \\frac{2}{3} = \\frac{15}{6} + \\frac{4}{6} = \\frac{19}{6}$."
+        }
+    ];
+
+    let currentIndex = 0;
+    let userAnswers = new Array(quizData.length).fill(null);
+    let correctCount = 0;
+
+    function renderMath() {
+        if (window.renderMathInElement) {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        }
+    }
+
+    function initQuiz() {
+        renderJumpGrid();
+        loadQuestion(0);
+    }
+
+    function loadQuestion(index) {
+        currentIndex = index;
+        const q = quizData[index];
+
+        document.getElementById('questionCounter').innerText = `Câu ${index + 1} / ${quizData.length}`;
+        document.getElementById('questionTitle').innerText = q.question;
+
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+
+        const letters = ['A', 'B', 'C', 'D'];
+        const selectedOpt = userAnswers[index];
+        const isAnswered = selectedOpt !== null;
+
+        q.options.forEach((optText, optIndex) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.id = `opt-btn-${optIndex}`;
+
+            let cleanText = optText.replace(/^[A-D]\.\s*/, '');
+
+            btn.innerHTML = `
+                <div class="option-badge">${letters[optIndex]}</div>
+                <span>${cleanText}</span>
+            `;
+
+            if (isAnswered) {
+                btn.disabled = true;
+                if (optIndex === q.correct) {
+                    btn.classList.add('correct');
+                } else if (optIndex === selectedOpt && selectedOpt !== q.correct) {
+                    btn.classList.add('incorrect');
+                }
+            } else {
+                btn.onclick = () => selectAnswer(optIndex);
+            }
+
+            optionsContainer.appendChild(btn);
+        });
+
+        const expBox = document.getElementById('explanationBox');
+        const expText = document.getElementById('explanationText');
+        if (isAnswered) {
+            expText.innerHTML = q.explanation;
+            expBox.classList.add('show');
+        } else {
+            expBox.classList.remove('show');
+        }
+
+        document.getElementById('prevBtn').disabled = (index === 0);
+        const nextBtn = document.getElementById('nextBtn');
+        if (index === quizData.length - 1) {
+            nextBtn.innerText = "Xem kết quả 🏁";
+        } else {
+            nextBtn.innerText = "Câu tiếp theo →";
+        }
+
+        updateJumpGridActive();
+        renderMath();
+    }
+
+    function selectAnswer(optIndex) {
+        if (userAnswers[currentIndex] !== null) return;
+
+        userAnswers[currentIndex] = optIndex;
+        const q = quizData[currentIndex];
+        const isCorrect = (optIndex === q.correct);
+
+        if (isCorrect) {
+            correctCount++;
+            document.getElementById('correctScore').innerText = correctCount;
+        }
+
+        q.options.forEach((_, i) => {
+            const btn = document.getElementById(`opt-btn-${i}`);
+            btn.disabled = true;
+            if (i === q.correct) {
+                btn.classList.add('correct');
+            } else if (i === optIndex && !isCorrect) {
+                btn.classList.add('incorrect');
+            }
+        });
+
+        const expBox = document.getElementById('explanationBox');
+        document.getElementById('explanationText').innerHTML = q.explanation;
+        expBox.classList.add('show');
+
+        renderJumpGrid();
+        renderMath();
+    }
+
+    function changeQuestion(direction) {
+        const newIndex = currentIndex + direction;
+        if (newIndex >= 0 && newIndex < quizData.length) {
+            loadQuestion(newIndex);
+        } else if (newIndex >= quizData.length) {
+            showResult();
+        }
+    }
+
+    function renderJumpGrid() {
+        const grid = document.getElementById('jumpGrid');
+        grid.innerHTML = '';
+
+        quizData.forEach((_, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'jump-btn';
+            btn.innerText = idx + 1;
+            if (idx === currentIndex) {
+                btn.classList.add('active');
+            }
+            
+            const ans = userAnswers[idx];
+            if (ans !== null) {
+                if (ans === quizData[idx].correct) {
+                    btn.classList.add('answered-correct');
+                } else {
+                    btn.classList.add('answered-incorrect');
+                }
+            }
+
+            btn.onclick = () => loadQuestion(idx);
+            grid.appendChild(btn);
+        });
+    }
+
+    function updateJumpGridActive() {
+        const buttons = document.querySelectorAll('.jump-btn');
+        buttons.forEach((btn, idx) => {
+            if (idx === currentIndex) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    function showResult() {
+        document.getElementById('quizMainContent').style.display = 'none';
+        document.getElementById('resultContainer').style.display = 'block';
+        document.getElementById('finalScoreCircle').innerText = `${correctCount}/${quizData.length}`;
+        
+        let msg = "Bạn đã hoàn thành rất tốt!";
+        if (correctCount === quizData.length) {
+            msg = "🏆 Tuyệt vời! Bạn đã đạt điểm tuyệt đối 12/12!";
+        } else if (correctCount >= 8) {
+            msg = "🌟 Rất giỏi! Bạn nắm vững kiến thức chương 1.";
+        } else {
+            msg = "💪 Cố gắng ôn tập thêm lý thuyết số hữu tỉ nhé!";
+        }
+        document.getElementById('resultMsg').innerText = msg;
+    }
+
+    function restartQuiz() {
+        userAnswers = new Array(quizData.length).fill(null);
+        correctCount = 0;
+        currentIndex = 0;
+        document.getElementById('correctScore').innerText = '0';
+        document.getElementById('resultContainer').style.display = 'none';
+        document.getElementById('quizMainContent').style.display = 'block';
+        initQuiz();
+    }
+
+    window.onload = initQuiz;
+</script>
+
+</body>
+</html>
