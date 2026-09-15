@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc Nghiệm Toán 7 - Bài 2: Các Phép Tính Với Số Hữu Tỉ</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- MathJax Library để hiển thị công thức Toán học đẹp mắt -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .quiz-container {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 750px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+
+        .quiz-header h1 {
+            color: #2d3748;
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .quiz-header p {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #edf2f7;
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4299e1, #667eea);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            color: #1a202c;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-weight: 600;
+            overflow-x: auto;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background-color: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 1rem;
+            color: #2d3748;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            word-break: break-word;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            background-color: #ebf8ff;
+            border-color: #3182ce;
+            transform: translateY(-2px);
+        }
+
+        .option-btn .prefix {
+            font-weight: bold;
+            margin-right: 12px;
+            background: #e2e8f0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4a5568;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .option-btn.correct {
+            background-color: #c6f6d5 !important;
+            border-color: #38a169 !important;
+            color: #22543d !important;
+        }
+
+        .option-btn.correct .prefix {
+            background-color: #38a169;
+            color: white;
+        }
+
+        .option-btn.wrong {
+            background-color: #fed7d7 !important;
+            border-color: #e53e3e !important;
+            color: #742a2a !important;
+        }
+
+        .option-btn.wrong .prefix {
+            background-color: #e53e3e;
+            color: white;
+        }
+
+        .explanation-box {
+            background-color: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.4s ease;
+            overflow-x: auto;
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            color: #2b6cb0;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .explanation-text {
+            color: #2d3748;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-prev {
+            background-color: #edf2f7;
+            color: #4a5568;
+        }
+
+        .btn-prev:hover:not([disabled]) {
+            background-color: #e2e8f0;
+        }
+
+        .btn-next {
+            background-color: #4c51bf;
+            color: white;
+            margin-left: auto;
+        }
+
+        .btn-next:hover:not([disabled]) {
+            background-color: #434190;
+            box-shadow: 0 4px 12px rgba(76, 81, 191, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .result-screen {
+            text-align: center;
+            padding: 20px 0;
+            display: none;
+        }
+
+        .result-icon {
+            font-size: 3.5rem;
+            color: #4c51bf;
+            margin-bottom: 15px;
+        }
+
+        .score-display {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .btn-restart {
+            background: linear-gradient(90deg, #4299e1, #667eea);
+            color: white;
+            margin: 20px auto 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive cho điện thoại di động */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .quiz-container {
+                padding: 18px 15px;
+                border-radius: 15px;
+            }
+
+            .quiz-header h1 {
+                font-size: 1.15rem;
+            }
+
+            .quiz-header p {
+                font-size: 0.85rem;
+            }
+
+            .question-text {
+                font-size: 1.05rem;
+            }
+
+            .option-btn {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+
+            .btn {
+                padding: 10px 14px;
+                font-size: 0.88rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="quiz-header">
+        <h1>TOÁN 7 - BÀI 2: CÁC PHÉP TÍNH VỚI SỐ HỮU TỈ</h1>
+        <p>Luyện tập trắc nghiệm có giải thích chi tiết</p>
+    </div>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <!-- Màn hình câu hỏi -->
+    <div id="quiz-screen">
+        <div class="question-meta">
+            <span id="question-number">Câu 1/12</span>
+            <span id="score-count">Điểm: 0</span>
+        </div>
+
+        <div class="question-text" id="question-text">
+            Đang tải câu hỏi...
+        </div>
+
+        <div class="options-grid" id="options-container">
+            <!-- Đáp án sẽ load ở đây -->
+        </div>
+
+        <div class="explanation-box" id="explanation-box">
+            <div class="explanation-title">
+                <i class="fa-solid fa-lightbulb"></i> Giải thích chi tiết:
+            </div>
+            <div class="explanation-text" id="explanation-text">
+                Lời giải...
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-prev" id="btn-prev" onclick="prevQuestion()" disabled>
+                <i class="fa-solid fa-arrow-left"></i> Câu trước
+            </button>
+            <button class="btn btn-next" id="btn-next" onclick="nextQuestion()">
+                Câu tiếp <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Màn hình kết quả -->
+    <div class="result-screen" id="result-screen">
+        <div class="result-icon">
+            <i class="fa-solid fa-trophy"></i>
+        </div>
+        <h2>Hoàn thành bài tập!</h2>
+        <div class="score-display" id="final-score">0 / 12</div>
+        <p id="feedback-text">Bạn đã nỗ lực rất tuyệt vời!</p>
+        <button class="btn btn-restart" onclick="restartQuiz()">
+            <i class="fa-solid fa-rotate-right"></i> Làm lại bài
+        </button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            question: "Câu 1: Kết quả của phép tính $-\\frac{2}{3} + \\frac{1}{4}$ là:",
+            options: [
+                "$-\\frac{1}{12}$",
+                "$-\\frac{5}{12}$",
+                "$\\frac{5}{12}$",
+                "$-\\frac{1}{7}$"
+            ],
+            correct: 1,
+            explanation: "Quy đồng mẫu số chung là 12:<br>$$-\\frac{2}{3} + \\frac{1}{4} = -\\frac{8}{12} + \\frac{3}{12} = \\frac{-8 + 3}{12} = -\\frac{5}{12}$$"
+        },
+        {
+            question: "Câu 2: Kết quả của phép tính $\\frac{3}{5} - \\left(-\\frac{2}{5}\\right)$ là:",
+            options: [
+                "$\\frac{1}{5}$",
+                "$-\\frac{1}{5}$",
+                "$1$",
+                "$-1$"
+            ],
+            correct: 2,
+            explanation: "Bỏ dấu ngoặc đổi dấu:<br>$$\\frac{3}{5} - \\left(-\\frac{2}{5}\\right) = \\frac{3}{5} + \\frac{2}{5} = \\frac{5}{5} = 1$$"
+        },
+        {
+            question: "Câu 3: Phép tính $-\\frac{4}{9} \\cdot \\frac{3}{8}$ cho kết quả bằng:",
+            options: [
+                "$-\\frac{1}{6}$",
+                "$\\frac{1}{6}$",
+                "$-\\frac{12}{17}$",
+                "$-\\frac{1}{12}$"
+            ],
+            correct: 0,
+            explanation: "Nhân tử với tử, mẫu với mẫu rồi rút gọn:<br>$$-\\frac{4}{9} \\cdot \\frac{3}{8} = \\frac{-4 \\cdot 3}{9 \\cdot 8} = \\frac{-12}{72} = -\\frac{1}{6}$$"
+        },
+        {
+            question: "Câu 4: Kết quả của phép chia $\\frac{-5}{7} : \\frac{10}{21}$ là:",
+            options: [
+                "$\\frac{3}{2}$",
+                "$-\\frac{2}{3}$",
+                "$-\\frac{3}{2}$",
+                "$-\\frac{50}{147}$"
+            ],
+            correct: 2,
+            explanation: "Nhân với số nghịch đảo:<br>$$\\frac{-5}{7} : \\frac{10}{21} = \\frac{-5}{7} \\cdot \\frac{21}{10} = \\frac{-5 \\cdot 21}{7 \\cdot 10} = -\\frac{3}{2}$$"
+        },
+        {
+            question: "Câu 5: Tìm $x$, biết: $x + \\frac{1}{3} = -\\frac{2}{5}$",
+            options: [
+                "$x = -\\frac{11}{15}$",
+                "$x = -\\frac{1}{15}$",
+                "$x = \\frac{11}{15}$",
+                "$x = -\\frac{3}{8}$"
+            ],
+            correct: 0,
+            explanation: "Chuyển vế và đổi dấu:<br>$$x = -\\frac{2}{5} - \\frac{1}{3} = -\\frac{6}{15} - \\frac{5}{15} = -\\frac{11}{15}$$"
+        },
+        {
+            question: "Câu 6: Giá trị của biểu thức $A = \\left(-\\frac{3}{4}\\right) \\cdot \\frac{5}{7} + \\left(-\\frac{3}{4}\\right) \\cdot \\frac{2}{7}$ là:",
+            options: [
+                "$\\frac{3}{4}$",
+                "$-\\frac{3}{4}$",
+                "$-\\frac{15}{28}$",
+                "$0$"
+            ],
+            correct: 1,
+            explanation: "Áp dụng tính chất phân phối:<br>$$A = -\\frac{3}{4} \\cdot \\left(\\frac{5}{7} + \\frac{2}{7}\\right) = -\\frac{3}{4} \\cdot \\frac{7}{7} = -\\frac{3}{4} \\cdot 1 = -\\frac{3}{4}$$"
+        },
+        {
+            question: "Câu 7: Số nghịch đảo của số hữu tỉ $-2,5$ là:",
+            options: [
+                "$2,5$",
+                "$-\\frac{5}{2}$",
+                "$-\\frac{2}{5}$",
+                "$\\frac{2}{5}$"
+            ],
+            correct: 2,
+            explanation: "Ta có $-2,5 = -\\frac{5}{2}$.<br>Do đó số nghịch đảo của nó là $-\\frac{2}{5}$."
+        },
+        {
+            question: "Câu 8: Tìm $x$, biết: $x \\cdot \\frac{3}{4} = -\\frac{9}{8}$",
+            options: [
+                "$x = -\\frac{3}{2}$",
+                "$x = -\\frac{27}{32}$",
+                "$x = \\frac{3}{2}$",
+                "$x = -\\frac{2}{3}$"
+            ],
+            correct: 0,
+            explanation: "Thực hiện phép chia tìm thừa số chưa biết:<br>$$x = -\\frac{9}{8} : \\frac{3}{4} = -\\frac{9}{8} \\cdot \\frac{4}{3} = -\\frac{3}{2}$$"
+        },
+        {
+            question: "Câu 9: Tìm $x$, biết: $x - \\frac{2}{5} = -\\frac{1}{2}$",
+            options: [
+                "$x = -\\frac{9}{10}$",
+                "$x = -\\frac{1}{10}$",
+                "$x = \\frac{1}{10}$",
+                "$x = -\\frac{3}{7}$"
+            ],
+            correct: 1,
+            explanation: "Chuyển vế đổi dấu:<br>$$x = -\\frac{1}{2} + \\frac{2}{5} = -\\frac{5}{10} + \\frac{4}{10} = -\\frac{1}{10}$$"
+        },
+        {
+            question: "Câu 10: Thực hiện phép tính $1,25 - 2\\frac{1}{4}$ thu được kết quả là:",
+            options: [
+                "$1$",
+                "$-1$",
+                "$-3,5$",
+                "$0,5$"
+            ],
+            correct: 1,
+            explanation: "Đổi hỗn số về số thập phân:<br>$$1,25 - 2\\frac{1}{4} = 1,25 - 2,25 = -1$$"
+        },
+        {
+            question: "Câu 11: Một ô tô chạy quãng đường $S$ trong 3 giờ. Giờ thứ nhất đi được $\\frac{1}{3}$ quãng đường, giờ thứ hai đi được $\\frac{2}{5}$ quãng đường. Hỏi giờ thứ ba ô tô đi được bao nhiêu phần quãng đường?",
+            options: [
+                "$\\frac{11}{15}$",
+                "$\\frac{4}{15}$",
+                "$\\frac{7}{15}$",
+                "$\\frac{1}{15}$"
+            ],
+            correct: 1,
+            explanation: "Phần quãng đường đi được trong 2 giờ đầu là:<br>$$\\frac{1}{3} + \\frac{2}{5} = \\frac{11}{15}$$<br>Phần quãng đường còn lại trong giờ thứ ba là:<br>$$1 - \\frac{11}{15} = \\frac{4}{15}$$"
+        },
+        {
+            question: "Câu 12: Tìm $x$, biết: $x : \\left(-\\frac{3}{5}\\right) = -2,5$",
+            options: [
+                "$x = 1,5$",
+                "$x = -1,5$",
+                "$x = \\frac{25}{6}$",
+                "$x = -\\frac{25}{6}$"
+            ],
+            correct: 0,
+            explanation: "Ta có:<br>$$x = -2,5 \\cdot \\left(-\\frac{3}{5}\\right) = -\\frac{5}{2} \\cdot \\left(-\\frac{3}{5}\\right) = \\frac{15}{10} = 1,5$$"
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    const questionText = document.getElementById("question-text");
+    const optionsContainer = document.getElementById("options-container");
+    const explanationBox = document.getElementById("explanation-box");
+    const explanationText = document.getElementById("explanation-text");
+    const questionNumberLabel = document.getElementById("question-number");
+    const scoreCountLabel = document.getElementById("score-count");
+    const progressBar = document.getElementById("progress-bar");
+    const btnPrev = document.getElementById("btn-prev");
+    const btnNext = document.getElementById("btn-next");
+
+    function renderMath() {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise();
+        }
+    }
+
+    function loadQuestion() {
+        const q = questions[currentQuestion];
+        questionText.innerHTML = q.question;
+        questionNumberLabel.innerText = `Câu ${currentQuestion + 1}/${questions.length}`;
+        progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+
+        optionsContainer.innerHTML = "";
+        
+        const prefixes = ["A", "B", "C", "D"];
+        q.options.forEach((opt, idx) => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.innerHTML = `<span class="prefix">${prefixes[idx]}</span> <span>${opt}</span>`;
+            
+            if (userAnswers[currentQuestion] !== null) {
+                btn.disabled = true;
+                if (idx === q.correct) {
+                    btn.classList.add("correct");
+                }
+                if (idx === userAnswers[currentQuestion] && idx !== q.correct) {
+                    btn.classList.add("wrong");
+                }
+            } else {
+                btn.onclick = () => selectOption(idx);
+            }
+
+            optionsContainer.appendChild(btn);
+        });
+
+        if (userAnswers[currentQuestion] !== null) {
+            explanationText.innerHTML = q.explanation;
+            explanationBox.style.display = "block";
+        } else {
+            explanationBox.style.display = "none";
+        }
+
+        btnPrev.disabled = currentQuestion === 0;
+        if (currentQuestion === questions.length - 1) {
+            btnNext.innerHTML = 'Hoàn thành <i class="fa-solid fa-check"></i>';
+        } else {
+            btnNext.innerHTML = 'Câu tiếp <i class="fa-solid fa-arrow-right"></i>';
+        }
+
+        renderMath();
+    }
+
+    function selectOption(index) {
+        userAnswers[currentQuestion] = index;
+        const q = questions[currentQuestion];
+
+        if (index === q.correct) {
+            score++;
+            scoreCountLabel.innerText = `Điểm: ${score}`;
+        }
+
+        loadQuestion();
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById("quiz-screen").style.display = "none";
+        document.getElementById("result-screen").style.display = "block";
+        document.getElementById("final-score").innerText = `${score} / ${questions.length}`;
+
+        let feedback = "";
+        const percentage = (score / questions.length) * 100;
+        if (percentage === 100) feedback = "Xuất sắc! Bạn đã nắm vững toàn bộ kiến thức Bài 2!";
+        else if (percentage >= 75) feedback = "Tốt lắm! Bạn làm bài rất khá!";
+        else if (percentage >= 50) feedback = "Khá tốt! Hãy ôn lại các câu chưa làm đúng nhé!";
+        else feedback = "Bạn cần luyện tập thêm kiến thức bài này nhé!";
+
+        document.getElementById("feedback-text").innerText = feedback;
+    }
+
+    function restartQuiz() {
+        currentQuestion = 0;
+        score = 0;
+        userAnswers.fill(null);
+        scoreCountLabel.innerText = `Điểm: 0`;
+        document.getElementById("quiz-screen").style.display = "block";
+        document.getElementById("result-screen").style.display = "none";
+        loadQuestion();
+    }
+
+    window.onload = loadQuestion;
+</script>
+
+</body>
+</html>

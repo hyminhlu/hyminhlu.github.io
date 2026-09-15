@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc Nghiệm Toán 7 - Bài 1: Tập hợp các số hữu tỉ</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        .quiz-container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 95%;
+            max-width: 900px; /* Tăng chiều rộng để vừa với phông chữ to */
+            padding: 35px;
+            position: relative;
+        }
+        .quiz-header {
+            border-bottom: 3px solid #f0f0f0;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+        .quiz-header h2 {
+            color: #2c3e50;
+            font-size: 1.6rem;
+        }
+        .progress-badge {
+            background-color: #4a90e2;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .question-text {
+            font-size: 1.45rem; /* Cỡ chữ to phục vụ trình chiếu */
+            color: #1a1a1a;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .option-btn {
+            background-color: #f8f9fa;
+            border: 2px solid #ced4da;
+            border-radius: 12px;
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 1.25rem; /* Cỡ chữ nút lựa chọn to rõ */
+            color: #212529;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            line-height: 1.4;
+        }
+        .option-btn:hover:not([disabled]) {
+            background-color: #e2e6ea;
+            border-color: #4a90e2;
+        }
+        .option-btn.correct {
+            background-color: #d4edda !important;
+            border-color: #28a745 !important;
+            color: #155724 !important;
+            font-weight: bold;
+        }
+        .option-btn.wrong {
+            background-color: #f8d7da !important;
+            border-color: #dc3545 !important;
+            color: #721c24 !important;
+        }
+        .explanation-box {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: #e8f4f8;
+            border-left: 6px solid #17a2b8;
+            color: #1b4965;
+            font-size: 1.2rem; /* Cỡ chữ lời giải to dễ đọc */
+            line-height: 1.5;
+            display: none;
+        }
+        .explanation-box strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #0c5460;
+            font-size: 1.25rem;
+        }
+        .quiz-footer {
+            margin-top: 30px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .next-btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: none;
+        }
+        .next-btn:hover {
+            background-color: #357abd;
+        }
+        .score-container {
+            text-align: center;
+            padding: 30px 0;
+        }
+        .score-container h3 {
+            font-size: 2.2rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .score-container p {
+            font-size: 1.5rem;
+            color: #495057;
+            margin-bottom: 30px;
+        }
+        .restart-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .restart-btn:hover {
+            background-color: #218838;
+        }
+
+        /* Responsive cho điện thoại di động */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .quiz-container {
+                padding: 20px 15px;
+                border-radius: 14px;
+            }
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .quiz-header h2 {
+                font-size: 1.3rem;
+            }
+            .progress-badge {
+                font-size: 0.95rem;
+                padding: 5px 12px;
+            }
+            .question-text {
+                font-size: 1.2rem;
+                margin-bottom: 18px;
+            }
+            .option-btn {
+                font-size: 1.05rem;
+                padding: 12px 14px;
+            }
+            .explanation-box {
+                font-size: 1.05rem;
+                padding: 15px;
+            }
+            .next-btn, .restart-btn {
+                width: 100%;
+                font-size: 1.1rem;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-body">
+        <div class="quiz-header">
+            <h2>Toán 7 - Bài 1: Tập hợp các số hữu tỉ</h2>
+            <span class="progress-badge" id="progress">Câu 1/12</span>
+        </div>
+
+        <div class="question-text" id="question">Nội dung câu hỏi sẽ hiển thị ở đây</div>
+
+        <div class="options-container" id="options">
+            <!-- Các nút đáp án sẽ được khởi tạo tự động -->
+        </div>
+
+        <div class="explanation-box" id="explanation">
+            <strong>Lời giải chi tiết:</strong>
+            <span id="explanation-text"></span>
+        </div>
+
+        <div class="quiz-footer">
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">Câu kế tiếp &rarr;</button>
+        </div>
+    </div>
+
+    <div id="score-body" class="score-container" style="display: none;">
+        <h3>Hoàn thành bài trắc nghiệm!</h3>
+        <p id="score-text"></p>
+        <button class="restart-btn" onclick="restartQuiz()">Làm lại bài tập</button>
+    </div>
+</div>
+
+<script>
+const quizData = [
+    {
+        question: "1. Số hữu tỉ là số được viết dưới dạng phân số a/b với:",
+        options: [
+            "A. a, b ∈ Z và b = 0",
+            "B. a, b ∈ Z và b ≠ 0",
+            "C. a, b ∈ N và b ≠ 0",
+            "D. a ∈ Z, b ∈ N"
+        ],
+        correct: 1,
+        explanation: "Theo định nghĩa, số hữu tỉ là số viết được dưới dạng phân số a/b với a, b ∈ Z và b ≠ 0."
+    },
+    {
+        question: "2. Tập hợp các số hữu tỉ được ký hiệu là:",
+        options: [
+            "A. N",
+            "B. Z",
+            "C. Q",
+            "D. R"
+        ],
+        correct: 2,
+        explanation: "Tập hợp các số hữu tỉ được ký hiệu là Q."
+    },
+    {
+        question: "3. Số đối của số hữu tỉ -2,5 là:",
+        options: [
+            "A. 2,5",
+            "B. -2,5",
+            "C. 5/2",
+            "D. Cả A và C đều đúng"
+        ],
+        correct: 3,
+        explanation: "Số đối của -2,5 là 2,5. Vì 2,5 = 5/2 nên cả A và C đều là đáp án đúng."
+    },
+    {
+        question: "4. Khẳng định nào sau đây là SAI?",
+        options: [
+            "A. Số 0 không phải là số hữu tỉ dương, cũng không là số hữu tỉ âm.",
+            "B. Mọi số nguyên đều là số hữu tỉ.",
+            "C. Số hữu tỉ âm nằm bên phải gốc 0 trên trục số.",
+            "D. Phân số 3/4 là một số hữu tỉ dương."
+        ],
+        correct: 2,
+        explanation: "Trên trục số, các điểm nằm trước (bên trái) gốc O biểu diễn số hữu tỉ âm."
+    },
+    {
+        question: "5. Điểm biểu diễn số hữu tỉ -3/2 nằm ở vị trí nào trên trục số so với gốc O?",
+        options: [
+            "A. Nằm bên phải gốc O và cách O một khoảng 1,5 đơn vị",
+            "B. Nằm bên trái gốc O và cách O một khoảng 1,5 đơn vị",
+            "C. Trùng với gốc O",
+            "D. Nằm bên trái gốc O và cách O một khoảng 3 đơn vị"
+        ],
+        correct: 1,
+        explanation: "Vì -3/2 = -1,5 (số hữu tỉ âm) nên điểm biểu diễn sẽ nằm bên trái gốc O và cách gốc O một khoảng bằng |-1,5| = 1,5 đơn vị."
+    },
+    {
+        question: "6. Khẳng định nào đúng trong các khẳng định sau?",
+        options: [
+            "A. -0,75 ∉ Q",
+            "B. 0 ∈ Q",
+            "C. -3/0 ∈ Q",
+            "D. 1,5 ∈ Z"
+        ],
+        correct: 1,
+        explanation: "0 = 0/1 (viết dưới dạng a/b với a,b ∈ Z, b ≠ 0) nên 0 thuộc tập hợp Q. Mẫu số bằng 0 (-3/0) không thỏa mãn."
+    },
+    {
+        question: "7. Sắp xếp các số hữu tỉ sau theo thứ tự tăng dần: -1,5; 0; 5/2",
+        options: [
+            "A. 5/2 ; 0 ; -1,5",
+            "B. -1,5 ; 5/2 ; 0",
+            "C. -1,5 ; 0 ; 5/2",
+            "D. 0 ; -1,5 ; 5/2"
+        ],
+        correct: 2,
+        explanation: "Vì -1,5 < 0 và 0 < 5/2 (= 2,5) nên thứ tự tăng dần là: -1,5 < 0 < 5/2."
+    },
+    {
+        question: "8. Trong các phân số sau, phân số nào biểu diễn số hữu tỉ -0,6?",
+        options: [
+            "A. 3/5",
+            "B. -6/10",
+            "C. -12/20",
+            "D. Cả B và C đều đúng"
+        ],
+        correct: 3,
+        explanation: "Ta có -0,6 = -6/10 = -3/5 = -12/20. Do đó cả -6/10 và -12/20 đều biểu diễn số hữu tỉ -0,6."
+    },
+    {
+        question: "9. Khoảng cách giữa hai điểm biểu diễn số đối của nhau trên trục số so với gốc O là:",
+        options: [
+            "A. Khác nhau",
+            "B. Bằng nhau",
+            "C. Luôn bằng 0",
+            "D. Bằng 1"
+        ],
+        correct: 1,
+        explanation: "Hai điểm biểu diễn hai số hữu tỉ đối nhau a và -a nằm về hai phía khác nhau so với gốc O và có cùng khoảng cách đến O."
+    },
+    {
+        question: "10. So sánh hai số hữu tỉ a = -0,375 và b = -5/8:",
+        options: [
+            "A. a > b",
+            "B. a < b",
+            "C. a = b",
+            "D. Không so sánh được"
+        ],
+        correct: 0,
+        explanation: "Đổi b = -5/8 = -0,625. Vì -0,375 > -0,625 nên a > b."
+    },
+    {
+        question: "11. Chỉ số WHtR của một người được tính bằng tỉ số giữa số đo vòng bụng và chiều cao. Nếu ông An có vòng bụng 108 cm, chiều cao 180 cm thì chỉ số WHtR là:",
+        options: [
+            "A. 0,6 (Thừa cân)",
+            "B. 0,52 (Tốt)",
+            "C. 0,57 (Hơi béo)",
+            "D. 0,63 (Béo phì)"
+        ],
+        correct: 0,
+        explanation: "Chỉ số WHtR của ông An = 108 / 180 = 0,6. Theo bảng tra cứu WHtR, chỉ số này nằm trong khoảng (0,57 - 0,63] là mức Thừa cân."
+    },
+    {
+        question: "12. Khẳng định nào sau đây là ĐÚNG?",
+        options: [
+            "A. Tập hợp Q gồm số hữu tỉ dương và số hữu tỉ âm.",
+            "B. Mọi số thập phân đều là số hữu tỉ.",
+            "C. Số hữu tỉ gồm số hữu tỉ dương, số hữu tỉ âm và số 0.",
+            "D. Hỗn số không phải là số hữu tỉ."
+        ],
+        correct: 2,
+        explanation: "Số hữu tỉ bao gồm các số hữu tỉ dương (lớn hơn 0), số hữu tỉ âm (nhỏ hơn 0) và số 0."
+    }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const explanationEl = document.getElementById("explanation");
+const explanationTextEl = document.getElementById("explanation-text");
+const nextBtn = document.getElementById("next-btn");
+const progressEl = document.getElementById("progress");
+
+function loadQuestion() {
+    answered = false;
+    const currentQuiz = quizData[currentQuestion];
+    
+    progressEl.innerText = `Câu ${currentQuestion + 1}/${quizData.length}`;
+    questionEl.innerText = currentQuiz.question;
+    optionsEl.innerHTML = "";
+    explanationEl.style.display = "none";
+    nextBtn.style.display = "none";
+
+    currentQuiz.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.classList.add("option-btn");
+        button.innerText = option;
+        button.onclick = () => selectOption(index);
+        optionsEl.appendChild(button);
+    });
+}
+
+function selectOption(selectedIndex) {
+    if (answered) return;
+    answered = true;
+
+    const currentQuiz = quizData[currentQuestion];
+    const buttons = optionsEl.querySelectorAll(".option-btn");
+
+    if (selectedIndex === currentQuiz.correct) {
+        buttons[selectedIndex].classList.add("correct");
+        score++;
+    } else {
+        buttons[selectedIndex].classList.add("wrong");
+        buttons[currentQuiz.correct].classList.add("correct");
+    }
+
+    buttons.forEach(btn => btn.disabled = true);
+
+    explanationTextEl.innerText = currentQuiz.explanation;
+    explanationEl.style.display = "block";
+    nextBtn.style.display = "inline-block";
+}
+
+function nextQuestion() {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+        loadQuestion();
+    } else {
+        showScore();
+    }
+}
+
+function showScore() {
+    document.getElementById("quiz-body").style.display = "none";
+    document.getElementById("score-body").style.display = "block";
+    document.getElementById("score-text").innerText = `Bạn trả lời đúng ${score} / ${quizData.length} câu!`;
+}
+
+function restartQuiz() {
+    currentQuestion = 0;
+    score = 0;
+    document.getElementById("score-body").style.display = "none";
+    document.getElementById("quiz-body").style.display = "block";
+    loadQuestion();
+}
+
+// Khởi chạy câu hỏi đầu tiên
+loadQuestion();
+</script>
+
+</body>
+</html>
