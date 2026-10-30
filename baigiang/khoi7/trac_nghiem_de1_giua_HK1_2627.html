@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc Nghiệm Toán Lớp 7</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- MathJax 3 configuration & script -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .option-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between py-6 px-4">
+
+    <!-- App Container -->
+    <div class="max-w-2xl w-full mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 flex flex-col">
+        
+        <!-- Header & Progress Bar -->
+        <div class="bg-indigo-600 p-6 text-white">
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight">Trắc Nghiệm Toán 7</h1>
+                <span id="score-counter" class="bg-indigo-700/60 text-indigo-100 text-xs md:text-sm font-semibold px-3 py-1 rounded-full border border-indigo-400/30">
+                    Điểm: <span id="current-score">0</span>/8
+                </span>
+            </div>
+            
+            <!-- Progress Bar Info -->
+            <div class="flex justify-between text-xs text-indigo-200 mb-1 font-medium">
+                <span id="progress-text">Câu hỏi 1 / 8</span>
+                <span id="progress-percent">12.5%</span>
+            </div>
+            <!-- Progress Track -->
+            <div class="w-full bg-indigo-900/40 rounded-full h-2.5 overflow-hidden">
+                <div id="progress-bar" class="bg-emerald-400 h-2.5 rounded-full transition-all duration-300" style="width: 12.5%"></div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="p-6 md:p-8 flex-1 flex flex-col justify-between" id="quiz-container">
+            
+            <div>
+                <!-- Question Title & Image -->
+                <div class="mb-6">
+                    <h2 id="question-text" class="text-lg md:text-xl font-semibold text-slate-800 leading-relaxed mb-4">
+                        <!-- Question content injected by JS -->
+                    </h2>
+                    
+                    <!-- Question Image Container -->
+                    <div id="image-container" class="hidden my-4 flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <img id="question-image" src="" alt="Hình minh họa câu hỏi" class="max-h-56 max-w-full rounded-lg object-contain shadow-sm" onerror="this.onerror=null; this.src='https://placehold.co/600x200/e2e8f0/475569?text=L%E1%BB%97i+t%E1%BA%A3i+%E1%BA%A3nh+(Thi%E1%BA%BFu+file)';">
+                    </div>
+                </div>
+
+                <!-- Answer Options Container -->
+                <div id="options-container" class="space-y-3 mb-6">
+                    <!-- Options injected dynamically by JS -->
+                </div>
+
+                <!-- Feedback Section -->
+                <div id="feedback-container" class="hidden p-4 rounded-xl border mb-6 transition-all duration-300">
+                    <div class="flex items-center gap-2 mb-2 font-bold text-base md:text-lg" id="feedback-status">
+                        <!-- Success / Danger icon and text -->
+                    </div>
+                    <div class="text-slate-700 text-sm md:text-base leading-relaxed" id="feedback-explanation">
+                        <!-- Explanation text -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer / Action Controls -->
+            <div class="pt-4 border-t border-slate-100 flex justify-end">
+                <button id="next-btn" disabled class="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white font-semibold rounded-xl shadow-md disabled:shadow-none transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed">
+                    <span>Kế tiếp</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Screen Container -->
+        <div id="result-container" class="hidden p-8 md:p-12 text-center flex-1 flex flex-col justify-center items-center">
+            <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-6 text-3xl font-bold shadow-inner">
+                🎓
+            </div>
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">Hoàn Thành Bài Tập!</h2>
+            <p class="text-slate-500 mb-6">Bạn đã hoàn thành tất cả 8 câu hỏi trắc nghiệm.</p>
+            
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 mb-8 w-full max-w-md">
+                <div class="text-sm text-slate-500 font-medium mb-1">Kết quả của bạn</div>
+                <div class="text-4xl font-extrabold text-indigo-600 mb-2" id="final-score">0 / 8</div>
+                <div class="text-sm font-semibold" id="score-comment">---</div>
+            </div>
+
+            <button id="restart-btn" onclick="restartQuiz()" class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5">
+                Làm lại bài tập
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Footer signature -->
+    <div class="text-center text-xs text-slate-400 mt-6">
+        Ứng dụng trắc nghiệm Toán 7 — Tích hợp MathJax & Tailwind CSS
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Array holding all question data
+        const quizData = [
+            {
+                id: 1,
+                question: "Câu 1. Tập hợp các số vô tỉ được ký hiệu là:",
+                options: [
+                    "\\(\\mathbb{N}\\)",
+                    "\\(\\mathbb{I}\\)",
+                    "\\(\\mathbb{Z}\\)",
+                    "\\(\\mathbb{Q}\\)"
+                ],
+                correct: 1, // index of option B
+                image: null,
+                explanation: "Tập hợp các số vô tỉ được kí hiệu là \\(\\mathbb{I}\\)."
+            },
+            {
+                id: 2,
+                question: "Câu 2. Khẳng định nào sau đây là đúng về tập hợp số hữu tỉ \\(\\mathbb{Q}\\)?",
+                options: [
+                    "\\(-5 \\notin \\mathbb{Q}\\).",
+                    "\\(0 \\notin \\mathbb{Q}\\).",
+                    "\\(1,5 \\in \\mathbb{Q}\\).",
+                    "\\(\\frac{4}{0} \\in \\mathbb{Q}\\)."
+                ],
+                correct: 2, // index of option C
+                image: null,
+                explanation: "\\(1,5 = \\frac{3}{2}\\) là số hữu tỉ nên \\(1,5 \\in \\mathbb{Q}\\). Mẫu số bằng 0 không xác định nên \\(\\frac{4}{0}\\) không phải số hữu tỉ."
+            },
+            {
+                id: 3,
+                question: "Câu 3. Cho hình dưới đây. Hãy cho biết điểm C biểu diễn số hữu tỷ nào?",
+                options: [
+                    "1",
+                    "3",
+                    "\\(\\frac{1}{4}\\)",
+                    "\\(\\frac{3}{4}\\)"
+                ],
+                correct: 3, // index of option D
+                image: "image1.png",
+                explanation: "Đoạn thẳng từ 0 đến 1 được chia thành 4 phần bằng nhau, mỗi phần tương ứng \\(\\frac{1}{4}\\). Điểm C nằm ở vạch thứ 3 bên phải số 0 nên C biểu diễn số \\(\\frac{3}{4}\\)."
+            },
+            {
+                id: 4,
+                question: "Câu 4. Kết quả làm tròn số 1234,54368 đến hàng phần trăm là:",
+                options: [
+                    "1234,54.",
+                    "1234,55.",
+                    "1234,5.",
+                    "1000."
+                ],
+                correct: 0, // index of option A
+                image: null,
+                explanation: "Chữ số ở hàng phần trăm là 4, chữ số ngay sau nó là 3 (< 5) nên ta giữ nguyên chữ số hàng phần trăm, làm tròn thành 1234,54."
+            },
+            {
+                id: 5,
+                question: "Câu 5. \\(\\sqrt{4}\\) bằng bao nhiêu?",
+                options: [
+                    "16",
+                    "4",
+                    "2",
+                    "8"
+                ],
+                correct: 2, // index of option C
+                image: null,
+                explanation: "Căn bậc hai số học của 4 là 2 vì \\(2^2 = 4\\) và \\(2 > 0\\)."
+            },
+            {
+                id: 6,
+                question: "Câu 6. Cho các số \\(2,(3); -2,5; \\sqrt{3}; 1\\). Số vô tỉ là",
+                options: [
+                    "\\(2,(3)\\)",
+                    "\\(-2,5\\)",
+                    "\\(\\sqrt{3}\\)",
+                    "1"
+                ],
+                correct: 2, // index of option C
+                image: null,
+                explanation: "\\(\\sqrt{3} \\approx 1,73205...\\) là số thập phân vô hạn không tuần hoàn nên là số vô tỉ."
+            },
+            {
+                id: 7,
+                question: "Câu 7. Xem hình bên, \\(\\widehat{A_1}\\) và \\(\\widehat{A_3}\\) là hai góc",
+                options: [
+                    "Đồng vị",
+                    "Đối đỉnh.",
+                    "So le trong",
+                    "Kề bù"
+                ],
+                correct: 1, // index of option B
+                image: "image2.png",
+                explanation: "Hai góc \\(\\widehat{A_1}\\) và \\(\\widehat{A_3}\\) nằm đối diện nhau qua đỉnh A, tạo bởi hai đường thẳng cắt nhau nên là hai góc đối đỉnh."
+            },
+            {
+                id: 8,
+                question: "Câu 8. Cho hình vẽ sau, góc \\(\\widehat{A_1}\\) và \\(\\widehat{B_1}\\) là hai góc",
+                options: [
+                    "Đồng vị",
+                    "Đối đỉnh.",
+                    "So le trong",
+                    "Kề bù"
+                ],
+                correct: 0, // index of option A
+                image: "image3.png",
+                explanation: "Hai góc nằm ở vị trí tương ứng giống nhau tại hai giao điểm A và B nên là hai góc đồng vị."
+            }
+        ];
+
+        // State Variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let isAnswered = false;
+
+        // DOM Elements
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainerEl = document.getElementById('options-container');
+        const imageContainerEl = document.getElementById('image-container');
+        const questionImageEl = document.getElementById('question-image');
+        const feedbackContainerEl = document.getElementById('feedback-container');
+        const feedbackStatusEl = document.getElementById('feedback-status');
+        const feedbackExplanationEl = document.getElementById('feedback-explanation');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBarEl = document.getElementById('progress-bar');
+        const progressTextEl = document.getElementById('progress-text');
+        const progressPercentEl = document.getElementById('progress-percent');
+        const currentScoreEl = document.getElementById('current-score');
+        const quizContainerEl = document.getElementById('quiz-container');
+        const resultContainerEl = document.getElementById('result-container');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreCommentEl = document.getElementById('score-comment');
+
+        // Labels for answers
+        const optionPrefixes = ['A', 'B', 'C', 'D'];
+
+        // Initialize App
+        function initQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            currentScoreEl.textContent = score;
+            quizContainerEl.classList.remove('hidden');
+            resultContainerEl.classList.add('hidden');
+            loadQuestion();
+        }
+
+        // Load Single Question
+        function loadQuestion() {
+            isAnswered = false;
+            selectedOption = null;
+            nextBtn.disabled = true;
+            feedbackContainerEl.classList.add('hidden');
+
+            const qData = quizData[currentQuestionIndex];
+
+            // Update Progress Bar
+            const currentNum = currentQuestionIndex + 1;
+            const totalNum = quizData.length;
+            const percent = (currentNum / totalNum) * 100;
+            
+            progressTextEl.textContent = `Câu hỏi ${currentNum} / ${totalNum}`;
+            progressPercentEl.textContent = `${percent}%`;
+            progressBarEl.style.width = `${percent}%`;
+
+            // Set Question Text
+            questionTextEl.innerHTML = qData.question;
+
+            // Image handling
+            if (qData.image) {
+                questionImageEl.src = qData.image;
+                questionImageEl.alt = `Hình minh họa cho ${qData.question.split('.')[0]}`;
+                imageContainerEl.classList.remove('hidden');
+            } else {
+                imageContainerEl.classList.add('hidden');
+            }
+
+            // Render Options
+            optionsContainerEl.innerHTML = '';
+            qData.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn w-full p-4 rounded-xl border-2 text-left font-medium flex items-start gap-3 border-slate-200 bg-white hover:border-indigo-300 hover:bg-indigo-50/50 cursor-pointer`;
+                btn.onclick = () => selectOption(index);
+                
+                btn.innerHTML = `
+                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-100 text-slate-600 font-bold text-sm shrink-0 mt-0.5">
+                        ${optionPrefixes[index]}
+                    </span>
+                    <span class="text-slate-700 text-base md:text-lg flex-1">
+                        ${option}
+                    </span>
+                `;
+                optionsContainerEl.appendChild(btn);
+            });
+
+            // Trigger MathJax re-render
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        // Select and Evaluate Option
+        function selectOption(index) {
+            if (isAnswered) return; // Lock multiple selections
+            
+            isAnswered = true;
+            selectedOption = index;
+            const qData = quizData[currentQuestionIndex];
+            const isCorrect = (index === qData.correct);
+
+            // Update Score
+            if (isCorrect) {
+                score++;
+                currentScoreEl.textContent = score;
+            }
+
+            // Update UI for buttons
+            const optionButtons = optionsContainerEl.children;
+            for (let i = 0; i < optionButtons.length; i++) {
+                const btn = optionButtons[i];
+                btn.disabled = true; // Disable all choices
+                const badge = btn.querySelector('span');
+
+                if (i === qData.correct) {
+                    // Correct answer style
+                    btn.className = `option-btn w-full p-4 rounded-xl border-2 text-left font-medium flex items-start gap-3 border-emerald-500 bg-emerald-50 text-emerald-900`;
+                    badge.className = `inline-flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500 text-white font-bold text-sm shrink-0 mt-0.5`;
+                } else if (i === index && !isCorrect) {
+                    // Incorrect selected answer style
+                    btn.className = `option-btn w-full p-4 rounded-xl border-2 text-left font-medium flex items-start gap-3 border-rose-500 bg-rose-50 text-rose-900`;
+                    badge.className = `inline-flex items-center justify-center w-7 h-7 rounded-lg bg-rose-500 text-white font-bold text-sm shrink-0 mt-0.5`;
+                } else {
+                    // Dim non-selected wrong answers
+                    btn.className = `option-btn w-full p-4 rounded-xl border-2 text-left font-medium flex items-start gap-3 border-slate-100 bg-slate-50 text-slate-400 opacity-60`;
+                }
+            }
+
+            // Display Feedback Box
+            if (isCorrect) {
+                feedbackContainerEl.className = 'p-4 rounded-xl border border-emerald-200 bg-emerald-50/80 mb-6 transition-all duration-300';
+                feedbackStatusEl.className = 'flex items-center gap-2 font-bold text-emerald-700 text-base md:text-lg';
+                feedbackStatusEl.innerHTML = `
+                    <svg class="w-6 h-6 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>Chính xác!</span>
+                `;
+            } else {
+                feedbackContainerEl.className = 'p-4 rounded-xl border border-rose-200 bg-rose-50/80 mb-6 transition-all duration-300';
+                feedbackStatusEl.className = 'flex items-center gap-2 font-bold text-rose-700 text-base md:text-lg';
+                feedbackStatusEl.innerHTML = `
+                    <svg class="w-6 h-6 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>Chưa chính xác! (Đáp án đúng: ${optionPrefixes[qData.correct]})</span>
+                `;
+            }
+
+            // Explanation content
+            feedbackExplanationEl.innerHTML = `<span class="font-semibold text-slate-800">Giải thích:</span> ${qData.explanation}`;
+            feedbackContainerEl.classList.remove('hidden');
+
+            // MathJax typesetting for explanation
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+
+            // Enable Next Button
+            nextBtn.disabled = false;
+        }
+
+        // Handle Next Question Click
+        nextBtn.onclick = () => {
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        };
+
+        // Show Final Score Screen
+        function showResults() {
+            quizContainerEl.classList.add('hidden');
+            resultContainerEl.classList.remove('hidden');
+
+            finalScoreEl.textContent = `${score} / ${quizData.length}`;
+
+            if (score === quizData.length) {
+                scoreCommentEl.textContent = 'Xuất sắc! Bạn đạt điểm tuyệt đối 10/10! 🎉';
+                scoreCommentEl.className = 'text-sm font-semibold text-emerald-600';
+            } else if (score >= 6) {
+                scoreCommentEl.textContent = 'Làm tốt lắm! Bạn hiểu bài rất rõ! 👍';
+                scoreCommentEl.className = 'text-sm font-semibold text-indigo-600';
+            } else if (score >= 4) {
+                scoreCommentEl.textContent = 'Khá ổn! Cần ôn luyện thêm một chút nhé. 🙂';
+                scoreCommentEl.className = 'text-sm font-semibold text-amber-600';
+            } else {
+                scoreCommentEl.textContent = 'Bạn hãy xem lại lý thuyết và thử làm lại bài tập nhé! 💪';
+                scoreCommentEl.className = 'text-sm font-semibold text-rose-600';
+            }
+        }
+
+        // Restart Quiz
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            initQuiz();
+        };
+    </script>
+</body>
+</html>
