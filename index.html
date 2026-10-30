@@ -276,7 +276,7 @@
 
                 if (response.ok && Array.isArray(files)) {
                     container.innerHTML = '';
-                    const validFiles = files.filter(f => f.type === 'file' && f.name.toLowerCase() !== 'readme.md');
+                    const validFiles = files.filter(f => f.type === 'file' && f.name.toLowerCase().endsWith('.html'));
 
                     if (validFiles.length === 0) {
                         container.innerHTML = '<span class="loading">Thư mục hiện đang trống.</span>';
