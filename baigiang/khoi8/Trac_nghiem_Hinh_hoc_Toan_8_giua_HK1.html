@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trắc nghiệm Hình học Toán 8 – Hình bình hành và hình chữ nhật</title>
+<style>
+:root{--blue:#2457a7;--pale:#eef5ff;--green:#18794e;--red:#b42318;--ink:#1f2937}
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6fb;color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.55}
+header{background:linear-gradient(120deg,#174a91,#4285d4);color:#fff;text-align:center;padding:24px 16px}
+header h1{font-size:clamp(1.3rem,4vw,2rem);margin:0 0 6px}
+header p{margin:0}
+main{width:min(800px,100%);padding:16px 12px 30px;margin:auto}
+.panel{background:#fff;border-radius:15px;padding:20px;box-shadow:0 3px 14px #17255412}
+.topline{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.pill{background:var(--pale);color:var(--blue);font-weight:bold;padding:6px 10px;border-radius:99px}
+.progress-wrap{height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin:12px 0 20px}
+#progress{height:100%;width:0;background:#2e9d68;transition:width .2s}
+h2{font-size:clamp(1.1rem,3vw,1.35rem);line-height:1.45;margin:10px 0 18px}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.choice{border:2px solid #d5dce7;background:#fff;border-radius:10px;padding:13px;text-align:left;font:inherit;cursor:pointer;color:inherit;min-height:52px}
+.choice:hover:not(:disabled){border-color:var(--blue);background:#f5f8ff}
+.choice:focus-visible,.action:focus-visible{outline:3px solid #fbbf24;outline-offset:2px}
+.choice:disabled{cursor:default}
+.choice.correct{border-color:var(--green);background:#eaf8f0}
+.choice.wrong{border-color:var(--red);background:#fff0ef}
+.feedback{display:none;margin-top:16px;padding:14px;border-radius:10px}
+.feedback.show{display:block}
+.feedback.good{background:#eaf8f0;border-left:4px solid var(--green)}
+.feedback.bad{background:#fff0ef;border-left:4px solid var(--red)}
+.controls{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:18px}
+.action{border:0;border-radius:9px;padding:12px 17px;font:inherit;cursor:pointer}
+.primary{background:var(--blue);color:#fff}
+.secondary{background:#e8edf5;color:#263449}
+.action:disabled{opacity:.45;cursor:not-allowed}
+#result{display:none;margin-top:18px}
+#result.show{display:block}
+.result-title{font-size:1.35rem;margin:0 0 8px}
+.note{color:#536174;font-size:.94rem}
+@media(max-width:520px){main{padding:12px 9px 24px}.panel{padding:15px}.choices{grid-template-columns:1fr;gap:8px}.choice{padding:12px}.controls .action{flex:1}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+<h1>TRẮC NGHIỆM HÌNH HỌC TOÁN 8</h1>
+<p>Chủ đề: Hình bình hành và hình chữ nhật</p>
+</header>
+<main>
+<section class="panel" id="quizPanel">
+<div class="topline">
+<span class="pill" id="counter">Câu 1/10</span>
+<strong id="score">Điểm: 0</strong>
+</div>
+<div class="progress-wrap" aria-label="Tiến độ làm bài"><div id="progress"></div></div>
+<p class="note">Chọn một đáp án A, B, C hoặc D. Sau khi chọn, em sẽ xem được đáp án đúng và lời giải thích. Chọn xong mới chuyển sang câu tiếp theo.</p>
+<h2 id="question" tabindex="-1"></h2>
+<div class="choices" id="choices"></div>
+<div class="feedback" id="feedback" aria-live="polite"></div>
+<div class="controls">
+<button class="action secondary" id="prev" type="button">← Câu trước</button>
+<button class="action primary" id="next" type="button" disabled>Câu kế tiếp →</button>
+</div>
+</section>
+<section class="panel" id="result" aria-live="polite">
+<h2 class="result-title">Hoàn thành bài trắc nghiệm!</h2>
+<p id="finalScore"></p>
+<p id="message"></p>
+<button class="action primary" id="restart" type="button">Làm lại từ đầu</button>
+</section>
+</main>
+<script>
+const questions = [
+{q:"Tứ giác ABCD là hình bình hành. Phát biểu nào sau đây đúng?",a:["AB = BC và AD = DC","AB ∥ CD và AD ∥ BC","Hai đường chéo AC và BD vuông góc với nhau trong mọi trường hợp","Bốn góc của tứ giác đều bằng 90°"],correct:1,why:"Hình bình hành có các cặp cạnh đối song song: AB ∥ CD và AD ∥ BC. Không phải hình bình hành nào cũng có bốn cạnh bằng nhau, hai đường chéo vuông góc hoặc bốn góc vuông."},
+{q:"Trong hình bình hành, hai cạnh đối có tính chất nào?",a:["Song song và bằng nhau","Vuông góc với nhau","Luôn bằng đường chéo","Không có quan hệ gì"],correct:0,why:"Một tính chất cơ bản của hình bình hành là các cạnh đối song song và bằng nhau."},
+{q:"Hai đường chéo của hình bình hành có tính chất nào?",a:["Luôn bằng nhau","Luôn vuông góc","Cắt nhau tại trung điểm của mỗi đường","Luôn là đường phân giác của bốn góc"],correct:2,why:"Hai đường chéo của hình bình hành cắt nhau tại trung điểm của mỗi đường. Chúng không nhất thiết bằng nhau hoặc vuông góc."},
+{q:"Dấu hiệu nào sau đây đủ để kết luận một tứ giác là hình bình hành?",a:["Có hai cạnh kề bằng nhau","Có một cặp cạnh đối song song","Hai cặp cạnh đối bằng nhau","Có hai đường chéo bằng nhau"],correct:2,why:"Nếu một tứ giác có hai cặp cạnh đối bằng nhau thì tứ giác đó là hình bình hành. Chỉ có một cặp cạnh đối song song hoặc hai đường chéo bằng nhau thì chưa đủ."},
+{q:"Một tứ giác có hai đường chéo cắt nhau tại trung điểm của mỗi đường. Tứ giác đó là hình gì?",a:["Chắc chắn là hình chữ nhật","Chắc chắn là hình bình hành","Chắc chắn là hình vuông","Chắc chắn là hình thang cân"],correct:1,why:"Dấu hiệu nhận biết hình bình hành: tứ giác có hai đường chéo cắt nhau tại trung điểm của mỗi đường thì là hình bình hành."},
+{q:"Hình chữ nhật có đặc điểm nào sau đây?",a:["Chỉ có một góc vuông","Có bốn góc vuông","Bốn cạnh luôn bằng nhau","Hai đường chéo luôn vuông góc"],correct:1,why:"Hình chữ nhật là tứ giác có bốn góc vuông. Bốn cạnh không nhất thiết bằng nhau và hai đường chéo không nhất thiết vuông góc."},
+{q:"Trong hình chữ nhật, hai đường chéo có tính chất nào?",a:["Bằng nhau và cắt nhau tại trung điểm mỗi đường","Vuông góc với nhau trong mọi trường hợp","Không cắt nhau","Một đường chéo dài gấp đôi đường kia"],correct:0,why:"Hình chữ nhật có hai đường chéo bằng nhau; đồng thời, vì hình chữ nhật là hình bình hành nên hai đường chéo cắt nhau tại trung điểm mỗi đường."},
+{q:"Dấu hiệu nào sau đây đủ để nhận biết một hình bình hành là hình chữ nhật?",a:["Hai cạnh kề bằng nhau","Hai đường chéo vuông góc","Có một góc vuông","Có một cặp cạnh đối bằng nhau"],correct:2,why:"Hình bình hành có một góc vuông thì là hình chữ nhật. Khi một góc bằng 90°, các góc còn lại cũng bằng 90°."},
+{q:"Tứ giác ABCD có hai đường chéo bằng nhau và cắt nhau tại trung điểm của mỗi đường. Có thể kết luận gì?",a:["ABCD là hình thang cân","ABCD là hình bình hành","ABCD là hình chữ nhật","ABCD chắc chắn là hình vuông"],correct:2,why:"Hai đường chéo cắt nhau tại trung điểm mỗi đường nên ABCD là hình bình hành. Hình bình hành có hai đường chéo bằng nhau là hình chữ nhật. Tuy nhiên, chưa đủ dữ kiện để kết luận là hình vuông."},
+{q:"Phát biểu nào đúng về mối quan hệ giữa hình chữ nhật và hình bình hành?",a:["Mọi hình bình hành đều là hình chữ nhật","Không hình chữ nhật nào là hình bình hành","Mọi hình chữ nhật đều là hình bình hành","Hình chữ nhật không có hai cặp cạnh đối song song"],correct:2,why:"Hình chữ nhật có hai cặp cạnh đối song song nên là một trường hợp đặc biệt của hình bình hành. Ngược lại, không phải mọi hình bình hành đều là hình chữ nhật."}
+];
+let current=0;
+const answers=Array(questions.length).fill(null);
+const letters=["A","B","C","D"];
+const $=id=>document.getElementById(id);
+function render(){
+ const q=questions[current];
+ $("counter").textContent=`Câu ${current+1}/${questions.length}`;
+ $("progress").style.width=`${(current+1)/questions.length*100}%`;
+ $("question").textContent=q.q;
+ $("choices").innerHTML="";
+ q.a.forEach((text,i)=>{
+   const b=document.createElement("button"); b.type="button";b.className="choice";
+   const strong=document.createElement("strong");strong.textContent=letters[i]+". ";
+   b.append(strong,document.createTextNode(text));
+   b.addEventListener("click",()=>choose(i));
+   $("choices").append(b);
+ });
+ $("feedback").className="feedback";$("feedback").textContent="";
+ $("prev").disabled=current===0;
+ if(answers[current]!==null) showAnswer(answers[current]);
+ $("next").disabled=answers[current]===null;
+ $("next").textContent=current===questions.length-1?"Xem kết quả →":"Câu kế tiếp →";
+ updateScore();
+}
+function choose(i){
+ if(answers[current]!==null)return;
+ answers[current]=i;
+ showAnswer(i);
+ updateScore();
+}
+function showAnswer(i){
+ const q=questions[current], buttons=[...$("choices").querySelectorAll("button")];
+ buttons.forEach((b,j)=>{b.disabled=true;if(j===q.correct)b.classList.add("correct");if(j===i&&i!==q.correct)b.classList.add("wrong");});
+ const ok=i===q.correct;
+ $("feedback").className=`feedback show ${ok?"good":"bad"}`;
+ $("feedback").innerHTML=`<strong>${ok?"Chính xác!":"Chưa chính xác."}</strong> Đáp án đúng: <strong>${letters[q.correct]}</strong>.<br>${q.why}`;
+ $("next").disabled=false;
+}
+function updateScore(){
+ const done=answers.filter(v=>v!==null).length;
+ const score=answers.reduce((s,v,i)=>s+(v===questions[i].correct?1:0),0);
+ $("score").textContent=`Điểm: ${score}/${questions.length}`;
+}
+$("next").addEventListener("click",()=>{
+ if(answers[current]===null)return;
+ if(current<questions.length-1){current++;render();$("question").focus();window.scrollTo({top:0,behavior:"smooth"});}
+ else showResult();
+});
+$("prev").addEventListener("click",()=>{if(current>0){current--;render();$("question").focus();}});
+function showResult(){
+ const score=answers.reduce((s,v,i)=>s+(v===questions[i].correct?1:0),0);
+ $("quizPanel").style.display="none";$("result").classList.add("show");
+ $("finalScore").textContent=`Em trả lời đúng ${score}/${questions.length} câu.`;
+ $("message").textContent=score===10?"Xuất sắc! Em đã nắm rất vững kiến thức.":score>=7?"Làm tốt! Hãy xem lại những câu chưa đúng để ghi nhớ kiến thức.":"Em hãy ôn lại tính chất và dấu hiệu nhận biết hình bình hành, hình chữ nhật rồi thử lại nhé.";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+$("restart").addEventListener("click",()=>{current=0;answers.fill(null);$("result").classList.remove("show");$("quizPanel").style.display="block";render();window.scrollTo({top:0,behavior:"smooth"});});
+render();
+</script>
+</body>
+</html>
