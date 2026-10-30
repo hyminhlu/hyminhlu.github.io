@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc Nghiệm Toán 7 - Giữa Học Kỳ 1 (Đề 2)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax CDN cho Công thức Toán -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4;
+        }
+        .correct-anim {
+            animation: pulse-green 0.4s ease-in-out;
+        }
+        .wrong-anim {
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-gray-800 antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 text-white shadow-md">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">Trắc Nghiệm Toán 7 - Đề 2</h1>
+                    <p class="text-xs text-emerald-100 font-medium">Đề Thi Ôn Tập Giữa Học Kỳ 1</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span id="header-quiz-info" class="text-sm font-semibold bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+                    8 Câu Hỏi
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-3xl mx-auto w-full px-4 py-6 flex-grow flex flex-col justify-center">
+        
+        <!-- CARD THI TRẮC NGHIỆM -->
+        <div id="quiz-card" class="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden flex flex-col transition-all duration-300">
+            
+            <!-- Progress Bar Section -->
+            <div class="bg-emerald-50/50 p-4 border-b border-emerald-100">
+                <div class="flex justify-between items-center text-sm font-semibold text-emerald-800 mb-2">
+                    <span id="question-progress-text">Câu hỏi 1 / 8</span>
+                    <span id="percent-text" class="text-emerald-600">0%</span>
+                </div>
+                <div class="w-full bg-emerald-100 rounded-full h-2.5 overflow-hidden">
+                    <div id="progress-bar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-500 ease-out" style="width: 12.5%"></div>
+                </div>
+            </div>
+
+            <!-- Question & Options Area -->
+            <div class="p-6 md:p-8 flex-grow">
+                
+                <!-- Tiêu đề câu hỏi -->
+                <div class="mb-4">
+                    <span id="question-tag" class="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-100 rounded-md mb-2">
+                        Câu 1
+                    </span>
+                    <h2 id="question-text" class="text-lg md:text-xl font-semibold text-gray-900 leading-relaxed">
+                        <!-- Nội dung câu hỏi -->
+                    </h2>
+                </div>
+
+                <!-- Hình ảnh minh họa (nếu có) -->
+                <div id="image-container" class="hidden my-4 text-center">
+                    <!-- Ảnh sẽ được nạp bằng JS -->
+                </div>
+
+                <!-- Danh sách đáp án -->
+                <div id="options-container" class="space-y-3 mt-4">
+                    <!-- Các đáp án sinh động bằng JS -->
+                </div>
+
+                <!-- Khung Giải Thích (Ẩn mặc định) -->
+                <div id="explanation-box" class="hidden mt-6 p-4 md:p-5 rounded-xl border bg-amber-50/80 border-amber-200 text-amber-900 transition-all duration-300">
+                    <div class="flex items-start space-x-3">
+                        <div class="p-1 bg-amber-200/60 rounded-md text-amber-800 mt-0.5 shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-sm uppercase tracking-wider text-amber-800 mb-1">Lời Giải Chi Tiết:</h4>
+                            <div id="explanation-text" class="text-sm md:text-base leading-relaxed text-gray-800">
+                                <!-- Lời giải load ở đây -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer Card: Nút điều hướng -->
+            <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-end items-center">
+                <button id="next-btn" onclick="nextQuestion()" disabled class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-md transition-all duration-200 flex items-center space-x-2">
+                    <span id="next-btn-text">Câu Tiếp Theo</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- MÀN HÌNH TỔNG KẾT (Ẩn mặc định) -->
+        <div id="result-card" class="hidden bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden p-6 md:p-8 transition-all duration-300">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-emerald-100 rounded-full mb-4">
+                    <svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Hoàn Thành Bài Thi!</h2>
+                <p class="text-gray-500 mt-1">Dưới đây là bảng đánh giá kết quả chi tiết của bạn</p>
+            </div>
+
+            <!-- Điểm số Dashboard -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl text-center">
+                    <span class="text-xs font-semibold text-emerald-600 uppercase">Tổng số câu</span>
+                    <p id="res-total" class="text-3xl font-bold text-emerald-900 mt-1">8</p>
+                </div>
+                <div class="bg-teal-50 border border-teal-100 p-4 rounded-xl text-center">
+                    <span class="text-xs font-semibold text-teal-600 uppercase">Số câu đúng</span>
+                    <p id="res-score" class="text-3xl font-bold text-teal-900 mt-1">0</p>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl text-center">
+                    <span class="text-xs font-semibold text-indigo-600 uppercase">Tỷ lệ chính xác</span>
+                    <p id="res-percentage" class="text-3xl font-bold text-indigo-900 mt-1">0%</p>
+                </div>
+            </div>
+
+            <!-- Đánh giá chung -->
+            <div class="mb-8 p-4 bg-gray-50 rounded-xl text-center">
+                <p id="res-feedback" class="font-medium text-gray-700"></p>
+            </div>
+
+            <!-- Danh sách xem lại chi tiết -->
+            <div class="mb-8">
+                <h3 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2">Chi Tiết Các Câu Hỏi</h3>
+                <div id="review-list" class="space-y-4">
+                    <!-- Chi tiết từng câu sẽ được render ở đây -->
+                </div>
+            </div>
+
+            <!-- Nút Làm lại bài thi -->
+            <div class="text-center pt-4">
+                <button onclick="restartQuiz()" class="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 inline-flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    <span>Làm Lại Đề 2</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-4 text-center text-xs text-gray-500">
+        <p>© 2026 Ôn Tập Toán 7 - Học Kỳ 1 (Đề 2). Thiết kế trực quan & chuẩn Sư Phạm.</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Dữ liệu 8 câu hỏi Toán 7 Đề 2
+        const quizData = [
+            {
+                id: 1,
+                question: "Tập hợp các số vô tỉ được ký hiệu là:",
+                image: null,
+                options: [
+                    "$\\mathbb{N}$",
+                    "$\\mathbb{I}$",
+                    "$\\mathbb{Z}$",
+                    "$\\mathbb{Q}$"
+                ],
+                correct: 1, // B
+                explanation: "Tập hợp các số vô tỉ được ký hiệu là $\\mathbb{I}$."
+            },
+            {
+                id: 2,
+                question: "Chọn phát biểu <strong>đúng</strong> trong các phát biểu sau:",
+                image: null,
+                options: [
+                    "$\\frac{-2}{3} \\in \\mathbb{N}$",
+                    "$0,5 \\in \\mathbb{Z}$",
+                    "$\\sqrt{2} \\in \\mathbb{I}$",
+                    "$0 \\in \\mathbb{N}^*$"
+                ],
+                correct: 2, // C
+                explanation: "$\\sqrt{2}$ là số vô tỉ nên $\\sqrt{2} \\in \\mathbb{I}$ là khẳng định đúng.<br>Các khẳng định còn lại sai vì: $\\frac{-2}{3} \\notin \\mathbb{N}$, $0,5 \\notin \\mathbb{Z}$, và $0 \\notin \\mathbb{N}^*$."
+            },
+            {
+                id: 3,
+                question: "Quan sát trục số sau và cho biết điểm nào biểu diễn số hữu tỉ $\\frac{-1}{5}$?",
+                image: "image5.png",
+                imageAlt: "Trục số",
+                options: [
+                    "Điểm E.",
+                    "Điểm F.",
+                    "Điểm G.",
+                    "Điểm H."
+                ],
+                correct: 1, // B (Điểm F)
+                explanation: "Số hữu tỉ $\\frac{-1}{5} = -0,2$ là số âm nằm giữa $0$ và $-1$, gần điểm $0$. Do đó điểm F biểu diễn số hữu tỉ $\\frac{-1}{5}$."
+            },
+            {
+                id: 4,
+                question: "Làm tròn số $12,3456$ đến chữ số thập phân thứ ba, ta được:",
+                image: null,
+                options: [
+                    "$12,34$",
+                    "$12,35$",
+                    "$12,3$",
+                    "$12,346$"
+                ],
+                correct: 3, // D (12,346)
+                explanation: "Chữ số ở hàng làm tròn là chữ số $5$ (hàng phần nghìn). Chữ số ngay sau nó là $6 \\ge 5$, nên ta tăng chữ số hàng làm tròn lên 1 đơn vị: $12,3456 \\approx 12,346$."
+            },
+            {
+                id: 5,
+                question: "$\\sqrt{4}$ bằng bao nhiêu?",
+                image: null,
+                options: [
+                    "16",
+                    "4",
+                    "2",
+                    "8"
+                ],
+                correct: 2, // C (2)
+                explanation: "Ta có $2^2 = 4$ và $2 > 0$ nên căn bậc hai số học của $4$ là $\\sqrt{4} = 2$."
+            },
+            {
+                id: 6,
+                question: "Trong các số sau, số nào là số vô tỉ?",
+                image: null,
+                options: [
+                    "$0$",
+                    "$\\sqrt{9}$",
+                    "$\\sqrt{2}$",
+                    "$-1,5$"
+                ],
+                correct: 2, // C (sqrt(2))
+                explanation: "$\\sqrt{2} \\approx 1,41421356...$ là số thập phân vô hạn không tuần hoàn nên là số vô tỉ.<br><i>Lưu ý:</i> $0$ và $-1,5$ là số hữu tỉ; $\\sqrt{9} = 3$ là số tự nhiên/số hữu tỉ."
+            },
+            {
+                id: 7,
+                question: "Xem hình bên, $\\widehat{A_1}$ và $\\widehat{A_3}$ là hai góc:",
+                image: "image6.png",
+                imageAlt: "Hình vẽ các góc",
+                options: [
+                    "Đồng vị",
+                    "Đối đỉnh.",
+                    "So le trong",
+                    "Kề bù"
+                ],
+                correct: 1, // B (Đối đỉnh)
+                explanation: "Hai góc $\\widehat{A_1}$ và $\\widehat{A_3}$ đối đỉnh với nhau tại đỉnh A."
+            },
+            {
+                id: 8,
+                question: "Xem hình trên, $\\widehat{A_3}$ và $\\widehat{B_2}$ là hai góc:",
+                image: "image6.png",
+                imageAlt: "Hình vẽ các góc",
+                options: [
+                    "Đồng vị",
+                    "Đối đỉnh.",
+                    "So le trong",
+                    "Kề bù"
+                ],
+                correct: 2, // C (So le trong)
+                explanation: "Dựa vào vị trí hình vẽ, hai góc $\\widehat{A_3}$ và $\\widehat{B_2}$ ở vị trí so le trong."
+            }
+        ];
+
+        // Biến Quản lý Trạng Thái
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+        let isAnswered = false;
+
+        // DOM Elements
+        const quizCard = document.getElementById('quiz-card');
+        const resultCard = document.getElementById('result-card');
+        const questionText = document.getElementById('question-text');
+        const questionTag = document.getElementById('question-tag');
+        const imageContainer = document.getElementById('image-container');
+        const optionsContainer = document.getElementById('options-container');
+        const progressBar = document.getElementById('progress-bar');
+        const questionProgressText = document.getElementById('question-progress-text');
+        const percentText = document.getElementById('percent-text');
+        const nextBtn = document.getElementById('next-btn');
+        const nextBtnText = document.getElementById('next-btn-text');
+        const explanationBox = document.getElementById('explanation-box');
+        const explanationText = document.getElementById('explanation-text');
+
+        // Khởi chạy khi trang tải xong
+        window.onload = function() {
+            loadQuestion();
+        };
+
+        // Hàm Render Câu Hỏi Hiện Tại
+        function loadQuestion() {
+            isAnswered = false;
+            const currentQ = quizData[currentQuestionIndex];
+
+            // Cập nhật thông tin tiến trình
+            const currentNum = currentQuestionIndex + 1;
+            const totalNum = quizData.length;
+            const percentage = Math.round((currentNum / totalNum) * 100);
+
+            questionProgressText.innerText = `Câu hỏi ${currentNum} / ${totalNum}`;
+            percentText.innerText = `${percentage}%`;
+            progressBar.style.width = `${percentage}%`;
+            questionTag.innerText = `Câu ${currentNum}`;
+            questionText.innerHTML = currentQ.question;
+
+            // Xử lý Hình ảnh (Nếu có)
+            if (currentQ.image) {
+                imageContainer.classList.remove('hidden');
+                imageContainer.innerHTML = `
+                    <img src="${currentQ.image}" alt="${currentQ.imageAlt || 'Hình minh họa'}" 
+                         class="max-w-full h-auto max-h-64 mx-auto my-2 rounded-lg border border-gray-200 shadow-sm"
+                         onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\\'p-3 bg-amber-50 text-amber-700 text-xs rounded-lg border border-amber-200 italic\\'>⚠️ Hãy đặt file <b>${currentQ.image}</b> cùng thư mục với file HTML để hiển thị hình vẽ.</div>';" />
+                `;
+            } else {
+                imageContainer.classList.add('hidden');
+                imageContainer.innerHTML = '';
+            }
+
+            // Ẩn giải thích & disabled nút kế tiếp
+            explanationBox.classList.add('hidden');
+            nextBtn.disabled = true;
+
+            // Đổi text nút nếu là câu cuối
+            if (currentQuestionIndex === totalNum - 1) {
+                nextBtnText.innerText = "Xem Kết Quả";
+            } else {
+                nextBtnText.innerText = "Câu Tiếp Theo";
+            }
+
+            // Xóa và Render danh sách đáp án
+            optionsContainer.innerHTML = '';
+            const labels = ['A', 'B', 'C', 'D'];
+
+            currentQ.options.forEach((opt, index) => {
+                const button = document.createElement('button');
+                button.className = `option-btn w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-emerald-400 hover:bg-emerald-50/50 transition-all duration-200 flex items-start space-x-3 group text-gray-800 font-medium focus:outline-none`;
+                button.onclick = () => selectOption(index);
+                button.setAttribute('data-index', index);
+
+                button.innerHTML = `
+                    <span class="w-7 h-7 flex items-center justify-center rounded-lg bg-gray-100 group-hover:bg-emerald-600 group-hover:text-white text-gray-600 font-bold text-sm shrink-0 transition-colors">
+                        ${labels[index]}
+                    </span>
+                    <span class="pt-0.5 text-base flex-grow">${opt}</span>
+                    <span class="icon-status shrink-0 ml-2 hidden"></span>
+                `;
+
+                optionsContainer.appendChild(button);
+            });
+
+            // Tự động render MathJax lại cho câu hỏi & đáp án
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        // Xử lý khi chọn Đáp án
+        function selectOption(selectedIndex) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const currentQ = quizData[currentQuestionIndex];
+            userAnswers[currentQuestionIndex] = selectedIndex;
+
+            const buttons = optionsContainer.querySelectorAll('.option-btn');
+            const isCorrect = selectedIndex === currentQ.correct;
+
+            if (isCorrect) {
+                score++;
+            }
+
+            // Disable tất cả các nút
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                btn.classList.remove('hover:border-emerald-400', 'hover:bg-emerald-50/50');
+                
+                const labelSpan = btn.querySelector('span:first-child');
+                const statusSpan = btn.querySelector('.icon-status');
+
+                // Tô màu đúng
+                if (idx === currentQ.correct) {
+                    btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'correct-anim');
+                    labelSpan.classList.add('bg-emerald-600', 'text-white');
+                    statusSpan.classList.remove('hidden');
+                    statusSpan.innerHTML = `
+                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>`;
+                }
+
+                // Tô màu sai (nếu người dùng chọn ô này)
+                if (idx === selectedIndex && !isCorrect) {
+                    btn.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900', 'wrong-anim');
+                    labelSpan.classList.add('bg-rose-600', 'text-white');
+                    statusSpan.classList.remove('hidden');
+                    statusSpan.innerHTML = `
+                        <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>`;
+                }
+            });
+
+            // Hiển thị khung giải thích
+            explanationText.innerHTML = currentQ.explanation;
+            explanationBox.classList.remove('hidden');
+
+            // Render lại MathJax trong phần giải thích
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+
+            // Kích hoạt nút Tiếp theo
+            nextBtn.disabled = false;
+        }
+
+        // Sang câu tiếp theo hoặc xem kết quả
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Hiển thị Màn hình Kết quả
+        function showResults() {
+            quizCard.classList.add('hidden');
+            resultCard.classList.remove('hidden');
+
+            const total = quizData.length;
+            const pct = Math.round((score / total) * 100);
+
+            document.getElementById('res-total').innerText = total;
+            document.getElementById('res-score').innerText = score;
+            document.getElementById('res-percentage').innerText = `${pct}%`;
+
+            // Nhận xét đánh giá
+            const feedbackEl = document.getElementById('res-feedback');
+            if (pct === 100) {
+                feedbackEl.innerHTML = "<strong class='text-emerald-600'>Xuất sắc!</strong> Bạn đã làm đúng tuyệt đối toàn bộ Đề 2 Toán 7!";
+            } else if (pct >= 75) {
+                feedbackEl.innerHTML = "<strong class='text-teal-600'>Rất tốt!</strong> Kiến thức Toán 7 của bạn rất vững chắc.";
+            } else if (pct >= 50) {
+                feedbackEl.innerHTML = "<strong class='text-amber-600'>Khá tốt!</strong> Hãy kiểm tra các câu trả lời sai ở dưới để ôn tập tốt hơn.";
+            } else {
+                feedbackEl.innerHTML = "<strong class='text-rose-600'>Cần cố gắng!</strong> Bạn hãy xem lại chi tiết lời giải và luyện tập lại nhé.";
+            }
+
+            // Render danh sách xem lại chi tiết
+            const reviewList = document.getElementById('review-list');
+            reviewList.innerHTML = '';
+
+            quizData.forEach((q, i) => {
+                const userChoice = userAnswers[i];
+                const isCorrect = userChoice === q.correct;
+
+                const item = document.createElement('div');
+                item.className = `p-4 rounded-xl border ${isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-rose-50/50 border-rose-200'}`;
+
+                const labels = ['A', 'B', 'C', 'D'];
+                const userChoiceStr = userChoice !== null ? `${labels[userChoice]}. ${q.options[userChoice]}` : "Chưa chọn";
+                const correctChoiceStr = `${labels[q.correct]}. ${q.options[q.correct]}`;
+
+                item.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <span class="font-bold text-sm ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">
+                            Câu ${i + 1}: ${isCorrect ? 'Đúng ✓' : 'Sai ✗'}
+                        </span>
+                    </div>
+                    <div class="mt-1 font-medium text-gray-900 text-sm md:text-base">${q.question}</div>
+                    ${q.image ? `<div class="my-2"><img src="${q.image}" alt="Hình minh họa" class="max-h-36 rounded border" onerror="this.style.display='none'"></div>` : ''}
+                    <div class="mt-2 text-xs md:text-sm space-y-1">
+                        <p class="${isCorrect ? 'text-emerald-800' : 'text-rose-800'}">
+                            <strong>Bạn chọn:</strong> ${userChoiceStr}
+                        </p>
+                        ${!isCorrect ? `<p class="text-emerald-800"><strong>Đáp án đúng:</strong> ${correctChoiceStr}</p>` : ''}
+                    </div>
+                    <div class="mt-2 pt-2 border-t border-gray-200/60 text-xs text-gray-700">
+                        <strong>Giải thích:</strong> ${q.explanation}
+                    </div>
+                `;
+
+                reviewList.appendChild(item);
+            });
+
+            // Render lại MathJax trong màn hình kết quả
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        // Làm lại bài thi từ đầu
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null);
+
+            resultCard.classList.add('hidden');
+            quizCard.classList.remove('hidden');
+
+            loadQuestion();
+        }
+    </script>
+</body>
+</html>
