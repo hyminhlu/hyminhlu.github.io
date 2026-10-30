@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Kiểm Tra Trắc Nghiệm - Hình Học</title>
+    <!-- Thư viện hiển thị công thức Toán học LaTeX MathJax -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #0056b3;
+            margin-bottom: 5px;
+        }
+        .info {
+            text-align: center;
+            font-style: italic;
+            color: #666;
+            margin-bottom: 25px;
+        }
+        .question-card {
+            display: none; /* Ẩn các câu, chỉ hiện câu hiện tại */
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        .question-card.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .question-layout {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        .question-content {
+            flex: 1;
+            min-width: 280px;
+        }
+        .img-container {
+            flex: 0 0 300px;
+            text-align: center;
+            background: #fafbfc;
+            padding: 10px;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+        }
+        .img-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .question-title {
+            font-weight: bold;
+            font-size: 1.15em;
+            margin-bottom: 15px;
+            color: #24292e;
+        }
+        .options label {
+            display: block;
+            margin: 10px 0;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+            border: 1px solid #d1d5db;
+            background: #fff;
+        }
+        .options label:hover {
+            background: #e1f5fe;
+            border-color: #81d4fa;
+        }
+        .options input {
+            margin-right: 10px;
+        }
+        .btn-container {
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-next {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-next:hover {
+            background-color: #0056b3;
+        }
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+        }
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        #result-container {
+            text-align: center;
+            display: none;
+        }
+        #result-container h2 {
+            color: #28a745;
+            font-size: 1.8em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>TRẮC NGHIỆM HÌNH HỌC</h1>
+    <div class="info">Trường THCS Phú Thọ — Giáo viên: Lư Hỷ Minh</div>
+
+    <div id="quiz-container">
+        <!-- Câu 1 -->
+        <div class="question-card active" data-id="0" data-answer="B">
+            <div class="question-layout">
+                <div class="question-content">
+                    <div class="question-title">Câu 1: Xem hình bên, \(\widehat{A_1}\) và \(\widehat{A_3}\) là hai góc:</div>
+                    <div class="options">
+                        <label><input type="radio" name="q0" value="A"> A. Đồng vị</label>
+                        <label><input type="radio" name="q0" value="B"> B. Đối đỉnh</label>
+                        <label><input type="radio" name="q0" value="C"> C. So le trong</label>
+                        <label><input type="radio" name="q0" value="D"> D. Kề bù</label>
+                    </div>
+                    <div class="feedback" id="feedback-0"></div>
+                </div>
+                <div class="img-container">
+                    <img src="image4.png" alt="Hình minh họa">
+                </div>
+            </div>
+        </div>
+
+        <!-- Câu 2 -->
+        <div class="question-card" data-id="1" data-answer="A">
+            <div class="question-layout">
+                <div class="question-content">
+                    <div class="question-title">Câu 2: Xem hình bên, \(\widehat{A_1}\) và \(\widehat{B_2}\) là hai góc:</div>
+                    <div class="options">
+                        <label><input type="radio" name="q1" value="A"> A. Đồng vị</label>
+                        <label><input type="radio" name="q1" value="B"> B. Đối đỉnh</label>
+                        <label><input type="radio" name="q1" value="C"> C. So le trong</label>
+                        <label><input type="radio" name="q1" value="D"> D. Kề bù</label>
+                    </div>
+                    <div class="feedback" id="feedback-1"></div>
+                </div>
+                <div class="img-container">
+                    <img src="image4.png" alt="Hình minh họa">
+                </div>
+            </div>
+        </div>
+
+        <!-- Câu 3 -->
+        <div class="question-card" data-id="2" data-answer="C">
+            <div class="question-layout">
+                <div class="question-content">
+                    <div class="question-title">Câu 3: Xem hình bên, \(\widehat{A_3}\) và \(\widehat{B_2}\) là hai góc:</div>
+                    <div class="options">
+                        <label><input type="radio" name="q2" value="A"> A. Đồng vị</label>
+                        <label><input type="radio" name="q2" value="B"> B. Đối đỉnh</label>
+                        <label><input type="radio" name="q2" value="C"> C. So le trong</label>
+                        <label><input type="radio" name="q2" value="D"> D. Kề bù</label>
+                    </div>
+                    <div class="feedback" id="feedback-2"></div>
+                </div>
+                <div class="img-container">
+                    <img src="image4.png" alt="Hình minh họa">
+                </div>
+            </div>
+        </div>
+
+        <!-- Câu 4 -->
+        <div class="question-card" data-id="3" data-answer="D">
+            <div class="question-layout">
+                <div class="question-content">
+                    <div class="question-title">Câu 4: Xem hình bên, \(\widehat{A_1}\) và \(\widehat{A_2}\) là hai góc:</div>
+                    <div class="options">
+                        <label><input type="radio" name="q3" value="A"> A. Đồng vị</label>
+                        <label><input type="radio" name="q3" value="B"> B. Đối đỉnh</label>
+                        <label><input type="radio" name="q3" value="C"> C. So le trong</label>
+                        <label><input type="radio" name="q3" value="D"> D. Kề bù</label>
+                    </div>
+                    <div class="feedback" id="feedback-3"></div>
+                </div>
+                <div class="img-container">
+                    <img src="image4.png" alt="Hình minh họa">
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-container">
+            <div></div> <!-- Khoảng trống căn chỉnh -->
+            <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()">Câu Kế Tiếp</button>
+        </div>
+    </div>
+
+    <!-- Tổng kết kết quả -->
+    <div id="result-container">
+        <h2>Hoàn thành bài kiểm tra!</h2>
+        <p id="score-text" style="font-size: 1.3em; font-weight: bold; margin: 20px 0;"></p>
+        <button class="btn btn-next" onclick="location.reload()">Làm Lại Bài</button>
+    </div>
+</div>
+
+<script>
+    let currentIdx = 0;
+    const cards = document.querySelectorAll('.question-card');
+    const totalQuestions = cards.length;
+    let score = 0;
+    let answered = false;
+
+    function nextQuestion() {
+        const currentCard = cards[currentIdx];
+        const correctAnswer = currentCard.getAttribute('data-answer');
+        const selectedOption = currentCard.querySelector(`input[name="q${currentIdx}"]:checked`);
+        const feedbackDiv = document.getElementById(`feedback-${currentIdx}`);
+
+        const nextBtn = document.getElementById('nextBtn');
+
+        if (!answered) {
+            // Lần bấm đầu tiên: Kiểm tra đáp án
+            if (!selectedOption) {
+                alert("Thầy/Em vui lòng chọn một đáp án trước khi tiếp tục!");
+                return;
+            }
+
+            answered = true;
+            if (selectedOption.value === correctAnswer) {
+                score++;
+                feedbackDiv.className = "feedback correct";
+                feedbackDiv.innerHTML = "Chính xác! Rất giỏi.";
+            } else {
+                feedbackDiv.className = "feedback incorrect";
+                feedbackDiv.innerHTML = `Chưa chính xác. Đáp án đúng là: ${correctAnswer}`;
+            }
+
+            if (currentIdx === totalQuestions - 1) {
+                nextBtn.innerHTML = "Xem Kết Quả";
+            } else {
+                nextBtn.innerHTML = "Câu Kế Tiếp";
+            }
+        } else {
+            // Lần bấm thứ hai: Chuyển câu hỏi tiếp theo hoặc sang bảng kết quả
+            answered = false;
+            currentIdx++;
+            if (currentIdx < totalQuestions) {
+                cards.forEach(c => c.classList.remove('active'));
+                cards[currentIdx].classList.add('active');
+                if (currentIdx === totalQuestions - 1) {
+                    nextBtn.innerHTML = "Nộp Bài";
+                } else {
+                    nextBtn.innerHTML = "Câu Kế Tiếp";
+                }
+            } else {
+                document.getElementById('quiz-container').style.display = 'none';
+                const resultContainer = document.getElementById('result-container');
+                resultContainer.style.display = 'block';
+                document.getElementById('score-text').innerHTML = `Số câu trả lời đúng của bạn: <span style="color: #007bff;">${score} / ${totalNames = totalQuestions}</span>`;
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
